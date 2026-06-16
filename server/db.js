@@ -1,4 +1,3 @@
-import sqlite3 from 'sqlite3';
 import pg from 'pg';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -20,6 +19,7 @@ if (isPostgres) {
   });
 } else {
   console.log('Database Client: SQLite (Local/Hostinger VPS)');
+  const sqlite3 = (await import('sqlite3')).default;
   const dbFile = path.resolve(__dirname, '../database.sqlite');
   dbInstance = new sqlite3.Database(dbFile);
 }
