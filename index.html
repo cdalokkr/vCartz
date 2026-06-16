@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vCardz - Premium Digital Business Card</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- FontAwesome for Brand Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      
+      <!-- Left Panel: Live Customizer (Desktop Only) -->
+      <aside class="customizer-panel" id="customizerPanel">
+        <div class="panel-header">
+          <div class="logo">
+            <i data-lucide="sparkles" class="logo-icon"></i>
+            <h1>vCard<span>z</span></h1>
+          </div>
+          <p>Create & share your premium digital business card in seconds.</p>
+        </div>
+
+        <form class="customizer-form" id="customizerForm" onsubmit="event.preventDefault();">
+          
+          <!-- Section 1: Template & Appearance -->
+          <div class="form-section">
+            <h3><i data-lucide="palette"></i> Design & Theme</h3>
+            <div class="form-group">
+              <label for="themeSelect">Card Style Theme</label>
+              <select id="themeSelect">
+                <option value="aura-glass" selected>Aura Glass (Glassmorphism)</option>
+                <option value="sunset-breeze">Sunset Breeze (Warm Minimalist)</option>
+                <option value="matrix-cyber">Matrix Cyber (Futuristic)</option>
+                <option value="neo-slate">Neo-Slate (Soft UI / Neomorphic)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="accentColor">Accent Glow Color</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="accentColor" value="#D3B20D">
+                <span class="color-value">#D3B20D</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Personal Details -->
+          <div class="form-section">
+            <h3><i data-lucide="user"></i> Contact Details</h3>
+            <div class="form-group">
+              <label for="inputName">Full Name</label>
+              <input type="text" id="inputName" value="Sarah Jenkins" placeholder="e.g. Sarah Jenkins" required>
+            </div>
+            <div class="form-group">
+              <label for="inputJobTitle">Professional Details (Job Title / Role)</label>
+              <input type="text" id="inputJobTitle" value="Creative Director" placeholder="e.g. Lead Designer / Software Engineer">
+            </div>
+            <div class="form-group">
+              <label for="inputOfficeName">Office / Company Name</label>
+              <input type="text" id="inputOfficeName" value="Aether Studio" placeholder="e.g. Acme Corp / Freelance">
+            </div>
+            <div class="form-group">
+              <label for="inputBio">Bio / Description</label>
+              <textarea id="inputBio" placeholder="Tell people briefly about yourself..." rows="3">Crafting meaningful digital experiences. Specializing in UI/UX design and motion effects.</textarea>
+            </div>
+          </div>
+
+          <!-- Section 3: Profile Photo -->
+          <div class="form-section">
+            <h3><i data-lucide="image"></i> Profile Photo</h3>
+            <div class="form-group">
+              <label>Select Avatar Preset</label>
+              <div class="avatar-presets">
+                <button type="button" class="avatar-preset-btn active" data-avatar="avatar1">
+                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80" alt="Avatar 1">
+                </button>
+                <button type="button" class="avatar-preset-btn" data-avatar="avatar2">
+                  <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80" alt="Avatar 2">
+                </button>
+                <button type="button" class="avatar-preset-btn" data-avatar="avatar3">
+                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80" alt="Avatar 3">
+                </button>
+                <button type="button" class="avatar-preset-btn" data-avatar="avatar4">
+                  <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80" alt="Avatar 4">
+                </button>
+                <button type="button" class="avatar-preset-btn" data-avatar="custom" id="customAvatarBtn">
+                  <span class="custom-avatar-placeholder"><i data-lucide="plus"></i></span>
+                </button>
+              </div>
+              <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+            </div>
+          </div>
+
+          <!-- Section 4: Communication -->
+          <div class="form-section">
+            <h3><i data-lucide="phone"></i> Quick Actions</h3>
+            <div class="form-group">
+              <label for="inputPhone">Phone Number</label>
+              <input type="tel" id="inputPhone" value="+1 (555) 019-2834" placeholder="+1234567890">
+            </div>
+            <div class="form-group">
+              <label for="inputEmail">Email Address</label>
+              <input type="email" id="inputEmail" value="sarah@aetherstudio.com" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+              <label for="inputGMap">Google Maps URL</label>
+              <input type="url" id="inputGMap" value="https://maps.google.com/?q=San+Francisco" placeholder="https://maps.google.com/...">
+            </div>
+          </div>
+
+          <!-- Section 5: Social Media -->
+          <div class="form-section">
+            <h3><i data-lucide="share-2"></i> Social Profiles</h3>
+            <div class="form-group">
+              <label for="socialLinkedIn">LinkedIn Profile</label>
+              <input type="url" id="socialLinkedIn" value="https://linkedin.com" placeholder="https://linkedin.com/in/username">
+            </div>
+            <div class="form-group">
+              <label for="socialTwitter">Twitter / X URL</label>
+              <input type="url" id="socialTwitter" value="https://twitter.com" placeholder="https://x.com/username">
+            </div>
+            <div class="form-group">
+              <label for="socialWhatsApp">WhatsApp Number (e.g. 15550192834)</label>
+              <input type="text" id="socialWhatsApp" value="15550192834" placeholder="Country code + number (no spaces)">
+            </div>
+            <div class="form-group">
+              <label for="socialFacebook">Facebook URL</label>
+              <input type="url" id="socialFacebook" value="https://facebook.com" placeholder="https://facebook.com/username">
+            </div>
+            <div class="form-group">
+              <label for="socialInstagram">Instagram URL</label>
+              <input type="url" id="socialInstagram" value="https://instagram.com" placeholder="https://instagram.com/username">
+            </div>
+          </div>
+
+        </form>
+      </aside>
+
+      <!-- Right Panel: Device Preview -->
+      <main class="preview-area">
+        
+        <!-- Toggle Customizer Button (Visible on mobile/tablet) -->
+        <button class="mobile-toggle-btn" id="mobileEditToggle">
+          <i data-lucide="edit-3"></i>
+          <span>Customize Card</span>
+        </button>
+
+        <div class="device-wrapper">
+          <div class="device-phone">
+            <div class="device-screen">
+              
+              <!-- Ambient background blur representing theme glow -->
+              <div class="ambient-glow" id="themeAmbientGlow"></div>
+              
+              <!-- The digital business card interface wrapper -->
+              <div class="vcard-app-view" id="vcardAppView">
+                
+                <!-- Front Page Content -->
+                <div class="vcard-container">
+                  <div class="vcard-card-perspective">
+                    
+                    <!-- Dynamic interactive 3D Tilting Card -->
+                    <div class="vcard-card" id="visitingCard">
+                      <div class="card-inner">
+                        
+                        <!-- Header Glow Outline -->
+                        <div class="card-glow-outline"></div>
+
+                        <!-- Card Header: Profile Picture & Basic Info -->
+                        <div class="card-header">
+                          <div class="avatar-container">
+                            <img id="cardAvatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80" alt="Sarah Jenkins">
+                          </div>
+                          <div class="user-info">
+                            <h2 class="user-name" id="cardName">Sarah Jenkins</h2>
+                            <p class="user-title" id="cardJobTitle">Creative Director</p>
+                            <p class="user-office" id="cardOfficeName">Aether Studio</p>
+                          </div>
+                        </div>
+
+                        <!-- Card Divider -->
+                        <div class="card-divider"></div>
+
+                        <!-- Card Body: Biography -->
+                        <div class="card-body">
+                          <p class="user-bio" id="cardBio">Crafting meaningful digital experiences. Specializing in UI/UX design and motion effects.</p>
+                        </div>
+
+                        <!-- Card Action Row 1: Call, Email, G Map -->
+                        <div class="card-quick-actions">
+                          <a href="tel:+15550192834" class="action-btn" id="linkPhone" title="Call">
+                            <i data-lucide="phone"></i>
+                            <span>Call</span>
+                          </a>
+                          <a href="mailto:sarah@aetherstudio.com" class="action-btn" id="linkEmail" title="Email">
+                            <i data-lucide="mail"></i>
+                            <span>Email</span>
+                          </a>
+                          <a href="https://maps.google.com/?q=San+Francisco" target="_blank" class="action-btn" id="linkGMap" title="G Map">
+                            <i data-lucide="map-pin"></i>
+                            <span>G Map</span>
+                          </a>
+                        </div>
+
+                        <!-- Social Media Row: LinkedIn, Twitter/X, WhatsApp, Facebook, Instagram -->
+                        <div class="card-socials">
+                          <a href="https://linkedin.com" target="_blank" class="social-icon" id="linkLinkedIn" title="LinkedIn">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                          </a>
+                          <a href="https://twitter.com" target="_blank" class="social-icon" id="linkTwitter" title="Twitter / X">
+                            <i class="fa-brands fa-x-twitter"></i>
+                          </a>
+                          <a href="https://wa.me/15550192834" target="_blank" class="social-icon" id="linkWhatsApp" title="WhatsApp">
+                            <i class="fa-brands fa-whatsapp"></i>
+                          </a>
+                          <a href="https://facebook.com" target="_blank" class="social-icon" id="linkFacebook" title="Facebook">
+                            <i class="fa-brands fa-facebook-f"></i>
+                          </a>
+                          <a href="https://instagram.com" target="_blank" class="social-icon" id="linkInstagram" title="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                          </a>
+                        </div>
+
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Share Link / My QR / Save Contact Utility Row -->
+                  <div class="vcard-utilities">
+                    <button class="util-btn" id="btnShareLink">
+                      <i data-lucide="link"></i>
+                      <span>Share Link</span>
+                    </button>
+                    <button class="util-btn" id="btnMyQR">
+                      <i data-lucide="qr-code"></i>
+                      <span>My QR</span>
+                    </button>
+                    <button class="util-btn primary-util-btn" id="btnSaveContact">
+                      <i data-lucide="user-plus"></i>
+                      <span>Save Contact</span>
+                    </button>
+                  </div>
+                  
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Modal overlay for My QR Code -->
+      <div class="qr-modal-overlay" id="qrModal">
+        <div class="qr-modal-card">
+          <button class="qr-modal-close" id="qrModalClose">
+            <i data-lucide="x"></i>
+          </button>
+          <h3>My QR Code</h3>
+          <p>Scan this QR code with another mobile phone to open and save this visiting card directly.</p>
+          <div class="qr-code-container">
+            <img id="qrCodeImage" src="" alt="Card QR Code">
+            <div class="qr-loading-spinner" id="qrSpinner"></div>
+          </div>
+          <div class="qr-actions">
+            <button class="qr-copy-btn" id="qrModalCopyLink">
+              <i data-lucide="copy"></i> Copy Link
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast notifications stack -->
+      <div class="toast-container" id="toastContainer"></div>
+
+    </div>
+
+    <!-- Main JS Application script -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
