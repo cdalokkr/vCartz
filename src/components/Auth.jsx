@@ -24,7 +24,10 @@ export default function Auth({ mode, onAuthSuccess, onNavigate }) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
+        const errMsg = data.message
+          ? `${data.error}: ${data.message} (DATABASE_URL exists: ${data.env_db_url_exists})`
+          : (data.error || 'Something went wrong');
+        throw new Error(errMsg);
       }
 
       onAuthSuccess(data.token, data.user);
