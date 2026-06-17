@@ -797,7 +797,7 @@ body {
 }
 
 .primary-util-btn {
-  grid-column: auto;
+  grid-column: span 2;
   background: var(--accent-color);
   color: #fff;
   border: 1px solid var(--accent-color);
@@ -3618,7 +3618,7 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: 0.5rem; /* Gap between header and card border */
+    margin-bottom: 0 !important; /* Replaced with 0 to reduce gap below app header */
     width: 100%;
   }
 
@@ -3641,6 +3641,7 @@ body {
     letter-spacing: -0.05em;
     color: #fff;
     line-height: 1.2;
+    margin: 0 !important; /* Reset browser default margins */
   }
 
   .card-header-above-card h3 span {
@@ -3652,7 +3653,8 @@ body {
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-top: 0.1rem;
+    margin: 0 !important; /* Reset browser default margins */
+    margin-top: 0.1rem !important; /* Keep only a small gap below the app name */
   }
 
   .public-card-viewer.tab-home .card-bio-wrap {
@@ -3661,7 +3663,6 @@ body {
     margin-bottom: 1rem !important;
   }
 
-  /* Lock scrolling for home page tab to fit in the viewport */
   .public-card-viewer.tab-home .card-viewer-body {
     overflow-y: hidden !important;
     justify-content: flex-start;
@@ -3674,6 +3675,10 @@ body {
 
   .public-card-viewer.tab-home .vcard-card-perspective {
     margin: 0 auto !important; /* Reset top margin since header-above-card handles it */
+  }
+
+  .tab-home-view {
+    gap: 0.35rem !important; /* Reduced layout gaps on mobile to align header and card closer */
   }
 
   /* Add padding-left to align social profile headline */

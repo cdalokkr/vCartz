@@ -554,10 +554,6 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                 <UserPlus size={16} />
                 <span>Save Contact</span>
               </button>
-              <button className="util-btn qr-util-btn" onClick={() => setActiveTab('qr')}>
-                <QrCode size={16} style={{ color: 'var(--accent-color)' }} />
-                <span>My QR Code</span>
-              </button>
             </div>
 
           </div>

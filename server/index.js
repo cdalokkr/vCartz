@@ -445,7 +445,8 @@ app.get('/api/public/cards/:slug', async (req, res) => {
       expiry_date: card.expiry_date,
       socials: card.socials ? JSON.parse(card.socials) : {},
       services: card.services || '',
-      about_us: card.about_us || ''
+      about_us: card.about_us || '',
+      address: card.address || ''
     };
 
     res.json(formattedCard);
