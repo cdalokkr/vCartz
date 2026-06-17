@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Home, Phone, Info, Mail, MapPin, Share2, QrCode, 
+  Home, Phone, Info, Mail, MapPin, MapPinHouse, Share2, QrCode, 
   UserPlus, Copy, X, Sparkles, Globe, Calendar, Building2, ArrowLeft, AlertTriangle, CreditCard, CheckCircle, Briefcase
 } from 'lucide-react';
+
 
 const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='100%25' height='100%25' fill='%230f172a'/><circle cx='12' cy='8' r='4' fill='%23475569'/><path d='M4 20c0-3.3 3.3-6 8-6s8 2.7 8 6' fill='%23475569'/></svg>";
 
@@ -500,7 +501,12 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                     <p className="card-summary-name">{card.name}</p>
                     {card.job_title && <p className="card-summary-title">{card.job_title}</p>}
                     {card.company && <p className="card-summary-company">{card.company}</p>}
-                    {card.address && <p className="card-summary-address">{card.address}</p>}
+                    {card.address && (
+                      <p className="card-summary-address">
+                        <MapPinHouse size={14} style={{ color: 'var(--accent-color)' }} />
+                        <span>{card.address}</span>
+                      </p>
+                    )}
                   </div>
 
                   {card.bio && (
@@ -591,7 +597,7 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
               {card.address && (
                 <div className="contact-item">
                   <div className="contact-item-icon">
-                    <MapPin size={18} />
+                    <MapPinHouse size={18} />
                   </div>
                   <div className="contact-item-details">
                     <span className="label">Physical Address</span>

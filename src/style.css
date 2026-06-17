@@ -2778,6 +2778,10 @@ body {
   color: var(--text-secondary);
   font-weight: 500;
   margin-top: 0.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   text-align: center;
 }
 .card-bio-wrap {
@@ -3596,17 +3600,25 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: -0.3rem !important; /* Reduced top margin of avatar */
+    margin-top: -0.5rem !important; /* Reduced top margin of avatar */
     margin-bottom: 0.15rem;
   }
 
   .public-card-viewer.tab-home .card-avatar-embedded img {
-    width: 135px !important; /* Increased size */
-    height: 135px !important; /* Increased size */
+    width: 160px !important; /* Increased size from 135px to 160px */
+    height: 160px !important; /* Increased size from 135px to 160px */
     border-radius: 50%;
     border: 3px solid var(--accent-color, #D3B20D);
     box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.25);
     object-fit: cover;
+  }
+
+  .public-card-viewer.tab-home .vcard-utilities {
+    margin-top: 1.1rem !important; /* Increase gap between card border and Save Contact button */
+  }
+
+  .viewer-tab-content .section-title {
+    margin-bottom: 0.5rem !important; /* Minimum gap after tab headings (Contacts, About Me) */
   }
 
   .public-card-viewer.tab-home .card-header-embedded {
