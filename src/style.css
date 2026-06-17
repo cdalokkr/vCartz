@@ -797,7 +797,7 @@ body {
 }
 
 .primary-util-btn {
-  grid-column: span 2;
+  grid-column: auto;
   background: var(--accent-color);
   color: #fff;
   border: 1px solid var(--accent-color);
@@ -2737,6 +2737,9 @@ body {
 .card-header-mobile-below {
   display: none;
 }
+.card-header-above-card {
+  display: none;
+}
 .card-header-embedded h3 span {
   color: var(--accent-color);
 }
@@ -2769,6 +2772,13 @@ body {
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-secondary);
+}
+.card-summary-address {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 0.15rem;
+  text-align: center;
 }
 .card-bio-wrap {
   margin-bottom: 1.25rem;
@@ -3603,28 +3613,41 @@ body {
     display: none !important; /* Hide original header inside card on mobile */
   }
 
-  .card-header-mobile-below {
+  .card-header-above-card {
     display: flex !important;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-top: 1.25rem !important;
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0.5rem; /* Gap between header and card border */
     width: 100%;
   }
 
-  .card-header-mobile-below h3 {
-    font-size: 1.25rem;
+  .card-header-above-card .logo-text-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .card-header-above-card .app-header-logo {
+    height: 1.4rem;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .card-header-above-card h3 {
+    font-size: 1.4rem;
     font-weight: 700;
     letter-spacing: -0.05em;
     color: #fff;
+    line-height: 1.2;
   }
 
-  .card-header-mobile-below h3 span {
+  .card-header-above-card h3 span {
     color: var(--accent-color);
   }
 
-  .card-header-mobile-below p {
+  .card-header-above-card p {
     font-size: 0.7rem;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -3642,7 +3665,7 @@ body {
   .public-card-viewer.tab-home .card-viewer-body {
     overflow-y: hidden !important;
     justify-content: flex-start;
-    padding-top: 0 !important; /* Reset padding-top to allow margin-top on the card perspective */
+    padding-top: 0.5rem !important; /* Padding matches left/right margins precisely */
     padding-left: 0.5rem !important; /* Match horizontal margin */
     padding-right: 0.5rem !important; /* Match horizontal margin */
     padding-bottom: 6.5rem; /* Safe padding above bottom nav bar */
@@ -3650,7 +3673,17 @@ body {
   }
 
   .public-card-viewer.tab-home .vcard-card-perspective {
-    margin: 0.5rem auto 0 auto !important; /* Keep exactly 0.5rem (8px) margin above the card to match side margins! */
+    margin: 0 auto !important; /* Reset top margin since header-above-card handles it */
+  }
+
+  /* Add padding-left to align social profile headline */
+  .social-contacts-list h4 {
+    padding-left: 0.75rem !important;
+  }
+
+  /* Remove underlines from social icons */
+  .social-icon-circle-btn {
+    text-decoration: none !important;
   }
 
   .public-card-viewer.tab-home .vcard-card {

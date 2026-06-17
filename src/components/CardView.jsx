@@ -461,6 +461,15 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
         {activeTab === 'home' && (
           <div className="viewer-tab-content tab-home-view">
             
+            {/* App name header with logo above the card on mobile */}
+            <div className="card-header-above-card">
+              <div className="logo-text-row">
+                <img src="/favicon.svg" alt="vCardz Logo" className="app-header-logo" />
+                <h3>vCard<span>z</span></h3>
+              </div>
+              <p>Digital Business Card</p>
+            </div>
+
             {/* Tilting card */}
             <div className="vcard-card-perspective">
               <div 
@@ -491,6 +500,7 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                     <p className="card-summary-name">{card.name}</p>
                     {card.job_title && <p className="card-summary-title">{card.job_title}</p>}
                     {card.company && <p className="card-summary-company">{card.company}</p>}
+                    {card.address && <p className="card-summary-address">{card.address}</p>}
                   </div>
 
                   {card.bio && (
@@ -544,12 +554,10 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                 <UserPlus size={16} />
                 <span>Save Contact</span>
               </button>
-            </div>
-
-            {/* App name below Save Contact button on mobile */}
-            <div className="card-header-mobile-below">
-              <h3>vCard<span>z</span></h3>
-              <p>Digital Business Card</p>
+              <button className="util-btn qr-util-btn" onClick={() => setActiveTab('qr')}>
+                <QrCode size={16} style={{ color: 'var(--accent-color)' }} />
+                <span>My QR Code</span>
+              </button>
             </div>
 
           </div>
@@ -583,6 +591,19 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
             
             <div className="contacts-list-wrapper">
               
+              {/* Physical Address */}
+              {card.address && (
+                <div className="contact-item">
+                  <div className="contact-item-icon">
+                    <MapPin size={18} />
+                  </div>
+                  <div className="contact-item-details">
+                    <span className="label">Physical Address</span>
+                    <span className="value">{card.address}</span>
+                  </div>
+                </div>
+              )}
+
               {/* Phone */}
               {card.phone && (
                 <div className="contact-item">
@@ -655,19 +676,6 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                     >
                       Open in Google Maps
                     </a>
-                  </div>
-                </div>
-              )}
-
-              {/* Physical Address */}
-              {card.address && (
-                <div className="contact-item">
-                  <div className="contact-item-icon">
-                    <MapPin size={18} />
-                  </div>
-                  <div className="contact-item-details">
-                    <span className="label">Physical Address</span>
-                    <span className="value">{card.address}</span>
                   </div>
                 </div>
               )}
