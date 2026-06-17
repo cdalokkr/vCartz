@@ -697,7 +697,7 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
             
             <div className="about-card-wrapper">
               <div className="about-bio-card">
-                <p className="about-bio-text">{card.bio || 'No profile bio details provided.'}</p>
+                <p className="about-bio-text">{card.about_us || 'No about us details provided.'}</p>
               </div>
 
               {card.company && (

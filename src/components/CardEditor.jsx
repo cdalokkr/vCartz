@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, Palette, User, Image, Plus, Phone, Share2, 
-  Eye, Save, X, Sparkles, MapPin, Mail, Globe, Calendar 
+  Eye, Save, X, Sparkles, MapPin, Mail, Globe, Calendar, Trash2 
 } from 'lucide-react';
 
 const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='100%25' height='100%25' fill='%230f172a'/><circle cx='12' cy='8' r='4' fill='%23475569'/><path d='M4 20c0-3.3 3.3-6 8-6s8 2.7 8 6' fill='%23475569'/></svg>";
@@ -9,13 +9,23 @@ const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/20
 export default function CardEditor({ card, token, onClose }) {
   const isNew = !card;
   
+  // Tab control state
+  const [activeEditorTab, setActiveEditorTab] = useState('basic');
+
   // Card settings state
   const [slug, setSlug] = useState(card?.slug || '');
   const [name, setName] = useState(card?.name || '');
   const [jobTitle, setJobTitle] = useState(card?.job_title || '');
   const [company, setCompany] = useState(card?.company || '');
   const [bio, setBio] = useState(card?.bio || '');
-  const [services, setServices] = useState(card?.services || '');
+  const [aboutUs, setAboutUs] = useState(card?.about_us || '');
+  const [servicesList, setServicesList] = useState(() => {
+    if (card?.services) {
+      const list = card.services.split('\n').map(s => s.trim()).filter(Boolean);
+      if (list.length > 0) return list;
+    }
+    return ['']; // start with one empty slot
+  });
   const [phone, setPhone] = useState(card?.phone || '');
   const [email, setEmail] = useState(card?.email || '');
   const [gmap, setGmap] = useState(card?.gmap || '');
@@ -138,6 +148,22 @@ export default function CardEditor({ card, token, onClose }) {
     });
   };
 
+  // Service list helpers
+  const handleServiceChange = (index, value) => {
+    const newList = [...servicesList];
+    newList[index] = value;
+    setServicesList(newList);
+  };
+
+  const handleAddService = () => {
+    setServicesList([...servicesList, '']);
+  };
+
+  const handleRemoveService = (index) => {
+    const newList = servicesList.filter((_, i) => i !== index);
+    setServicesList(newList.length === 0 ? [''] : newList);
+  };
+
   // Save changes
   const handleSave = async (e) => {
     e.preventDefault();
@@ -156,6 +182,7 @@ export default function CardEditor({ card, token, onClose }) {
       job_title: jobTitle,
       company,
       bio,
+      about_us: aboutUs,
       phone,
       email,
       gmap,
@@ -163,7 +190,7 @@ export default function CardEditor({ card, token, onClose }) {
       accent_color: accentColor,
       avatar_url: avatarUrl,
       socials,
-      services,
+      services: servicesList.filter(s => s.trim()).join('\n'),
       expiry_date: new Date(expiryDate).toISOString()
     };
 
@@ -251,331 +278,442 @@ export default function CardEditor({ card, token, onClose }) {
         <div className="editor-modal-body">
           {error && <div className="editor-error-banner">{error}</div>}
 
+          {/* Navigation Tabs */}
+          <div className="editor-tabs-nav">
+            <button
+              type="button"
+              className={`editor-tab-btn ${activeEditorTab === 'basic' ? 'active' : ''}`}
+              onClick={() => setActiveEditorTab('basic')}
+            >
+              Basic Info
+            </button>
+            <button
+              type="button"
+              className={`editor-tab-btn ${activeEditorTab === 'bio' ? 'active' : ''}`}
+              onClick={() => setActiveEditorTab('bio')}
+            >
+              Bio & About
+            </button>
+            <button
+              type="button"
+              className={`editor-tab-btn ${activeEditorTab === 'services' ? 'active' : ''}`}
+              onClick={() => setActiveEditorTab('services')}
+            >
+              Services
+            </button>
+            <button
+              type="button"
+              className={`editor-tab-btn ${activeEditorTab === 'socials' ? 'active' : ''}`}
+              onClick={() => setActiveEditorTab('socials')}
+            >
+              Socials & Links
+            </button>
+            <button
+              type="button"
+              className={`editor-tab-btn ${activeEditorTab === 'branding' ? 'active' : ''}`}
+              onClick={() => setActiveEditorTab('branding')}
+            >
+              Branding & Design
+            </button>
+          </div>
+
           <form id="card-editor-form" onSubmit={handleSave} className="customizer-form">
             
-            {/* Section 0: Core Profile Information */}
-            <div className="form-section">
-              <h3><User size={16} /> Core Information</h3>
-              
-              {/* Row 1: Full Name & Custom Profile Slug */}
-              <div className="form-row-grid">
-                <div className="form-group">
-                  <label>Full Name</label>
-                  <input 
-                    type="text" 
-                    value={name} 
-                    onChange={(e) => handleNameChange(e.target.value)} 
-                    placeholder="Sarah Jenkins"
-                    required 
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label style={{ whiteSpace: 'nowrap' }}>Profile Slug (domain.com/slug)</label>
-                  <div className="slug-flex-row">
-                    <div className="slug-input-wrapper" style={{ flex: 1 }}>
-                      <span className="slug-prefix">/</span>
-                      <input 
-                        type="text" 
-                        value={slug} 
-                        onChange={(e) => {
-                          setSlug(e.target.value);
-                          setIsSlugManual(true);
-                          checkSlugAvailability(e.target.value);
-                        }} 
-                        placeholder="e.g. john-doe"
-                        disabled={!isNew}
-                        required 
-                      />
-                    </div>
-                    {isNew && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const baseSlug = name
-                            .toLowerCase()
-                            .trim()
-                            .replace(/[^a-z0-9]+/g, '-')
-                            .replace(/(^-|-$)/g, '');
-                          if (baseSlug) {
-                            const styles = [
-                              `${baseSlug}-pro`,
-                              `${baseSlug}-vip`,
-                              `${baseSlug}-card`,
-                              `${baseSlug}-${Math.floor(100 + Math.random() * 900)}`
-                            ];
-                            const randomStyle = styles[Math.floor(Math.random() * styles.length)];
-                            setSlug(randomStyle);
-                            setIsSlugManual(true);
-                            checkSlugAvailability(randomStyle);
-                          } else {
-                            alert('Please enter a name first to generate a slug.');
-                          }
-                        }}
-                        style={{
-                          background: 'rgba(255,255,255,0.03)',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                          borderRadius: '8px',
-                          color: '#fff',
-                          padding: '0 0.75rem',
-                          fontSize: '0.8rem',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Suggest Style
-                      </button>
-                    )}
-                  </div>
-
-                  {isNew && slug && (
-                    <div style={{ marginTop: '0.5rem', fontSize: '0.8rem' }}>
-                      {slugChecking ? (
-                        <span style={{ color: '#94a3b8' }}>Checking availability...</span>
-                      ) : slugStatus === 'available' ? (
-                        <span style={{ color: '#34d399' }}>✓ Slug is unique and available!</span>
-                      ) : slugStatus === 'taken' ? (
-                        <span style={{ color: '#f87171' }}>✗ Slug already in use. Try another or click "Suggest Style"!</span>
-                      ) : slugStatus === 'invalid' ? (
-                        <span style={{ color: '#f87171' }}>✗ Slug contains invalid characters. Use letters, numbers, hyphens, and underscores only.</span>
-                      ) : null}
-                    </div>
-                  )}
-                  <p className="help-text">Letters, numbers, hyphens, underscores.</p>
-                </div>
-              </div>
-
-              {/* Row 2: Phone Number & Email Address (moved from Quick Actions) */}
-              <div className="form-row-grid">
-                <div className="form-group">
-                  <label>Phone Number</label>
-                  <input 
-                    type="tel" 
-                    value={phone} 
-                    onChange={(e) => setPhone(e.target.value)} 
-                    placeholder="+1 (555) 019-2834"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Email Address</label>
-                  <input 
-                    type="email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    placeholder="sarah@aetherstudio.com"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Section 1: Professional Details */}
-            <div className="form-section">
-              <h3><User size={16} /> Professional Details</h3>
-              <div className="form-row-grid">
-                <div className="form-group">
-                  <label>Professional Title</label>
-                  <input 
-                    type="text" 
-                    value={jobTitle} 
-                    onChange={(e) => setJobTitle(e.target.value)} 
-                    placeholder="Creative Director"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Office / Company Name</label>
-                  <input 
-                    type="text" 
-                    value={company} 
-                    onChange={(e) => setCompany(e.target.value)} 
-                    placeholder="Aether Studio"
-                  />
-                </div>
-              </div>
-              <div className="form-group full-width">
-                <label>Bio / Description</label>
-                <textarea 
-                  rows="2"
-                  value={bio} 
-                  onChange={(e) => setBio(e.target.value)} 
-                  placeholder="Briefly describe your services or profile..."
-                />
-              </div>
-              <div className="form-group full-width">
-                <label>Services (One per line)</label>
-                <textarea 
-                  rows="4"
-                  value={services} 
-                  onChange={(e) => setServices(e.target.value)} 
-                  placeholder="Enter services offered, one per line..."
-                />
-              </div>
-            </div>
-
-            {/* Section 2: Validity & Profile Photo (moved to before Theme and Color) */}
-            <div className="form-section">
-              <h3><Calendar size={16} /> Validity & Profile Photo</h3>
-              <div className="form-row-grid">
-                <div className="form-group">
-                  <label>Validity Expiry Date</label>
-                  <div className="modern-date-input-wrapper" onClick={handleWrapperClick}>
-                    <Calendar size={16} style={{ color: 'var(--accent-color)', marginLeft: '0.75rem', marginRight: '0.25rem', pointerEvents: 'none' }} />
+            {/* Tab 1: Basic Info */}
+            {activeEditorTab === 'basic' && (
+              <div className="form-section">
+                <h3><User size={16} /> Basic Information</h3>
+                
+                {/* Row 1: Full Name & Custom Profile Slug */}
+                <div className="form-row-grid">
+                  <div className="form-group">
+                    <label>Full Name</label>
                     <input 
-                      ref={dateInputRef}
-                      type="date" 
-                      value={expiryDate} 
-                      onChange={(e) => setExpiryDate(e.target.value)} 
+                      type="text" 
+                      value={name} 
+                      onChange={(e) => handleNameChange(e.target.value)} 
+                      placeholder="Sarah Jenkins"
                       required 
                     />
                   </div>
-                  <p className="help-text">Digital card will expire after this date.</p>
+
+                  <div className="form-group">
+                    <label style={{ whiteSpace: 'nowrap' }}>Profile Slug (domain.com/slug)</label>
+                    <div className="slug-flex-row">
+                      <div className="slug-input-wrapper" style={{ flex: 1 }}>
+                        <span className="slug-prefix">/</span>
+                        <input 
+                          type="text" 
+                          value={slug} 
+                          onChange={(e) => {
+                            setSlug(e.target.value);
+                            setIsSlugManual(true);
+                            checkSlugAvailability(e.target.value);
+                          }} 
+                          placeholder="e.g. john-doe"
+                          disabled={!isNew}
+                          required 
+                        />
+                      </div>
+                      {isNew && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const baseSlug = name
+                              .toLowerCase()
+                              .trim()
+                              .replace(/[^a-z0-9]+/g, '-')
+                              .replace(/(^-|-$)/g, '');
+                            if (baseSlug) {
+                              const styles = [
+                                `${baseSlug}-pro`,
+                                `${baseSlug}-vip`,
+                                `${baseSlug}-card`,
+                                `${baseSlug}-${Math.floor(100 + Math.random() * 900)}`
+                              ];
+                              const randomStyle = styles[Math.floor(Math.random() * styles.length)];
+                              setSlug(randomStyle);
+                              setIsSlugManual(true);
+                              checkSlugAvailability(randomStyle);
+                            } else {
+                              alert('Please enter a name first to generate a slug.');
+                            }
+                          }}
+                          style={{
+                            background: 'rgba(255,255,255,0.03)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '8px',
+                            color: '#fff',
+                            padding: '0 0.75rem',
+                            fontSize: '0.8rem',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Suggest Style
+                        </button>
+                      )}
+                    </div>
+
+                    {isNew && slug && (
+                      <div style={{ marginTop: '0.5rem', fontSize: '0.8rem' }}>
+                        {slugChecking ? (
+                          <span style={{ color: '#94a3b8' }}>Checking availability...</span>
+                        ) : slugStatus === 'available' ? (
+                          <span style={{ color: '#34d399' }}>✓ Slug is unique and available!</span>
+                        ) : slugStatus === 'taken' ? (
+                          <span style={{ color: '#f87171' }}>✗ Slug already in use. Try another or click "Suggest Style"!</span>
+                        ) : slugStatus === 'invalid' ? (
+                          <span style={{ color: '#f87171' }}>✗ Slug contains invalid characters. Use letters, numbers, hyphens, and underscores only.</span>
+                        ) : null}
+                      </div>
+                    )}
+                    <p className="help-text">Letters, numbers, hyphens, underscores.</p>
+                  </div>
                 </div>
 
-                <div className="form-group">
-                  <label>Upload Profile Photo</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.25rem' }}>
-                    <div className="current-avatar-preview" style={{
-                      width: '45px',
-                      height: '45px',
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      border: '2px solid var(--accent-color)',
-                      background: 'rgba(0,0,0,0.2)',
-                      flexShrink: 0
-                    }}>
-                      <img 
-                        src={avatarUrl || DEFAULT_AVATAR} 
-                        alt="Avatar Preview" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                {/* Row 2: Phone Number & Email Address */}
+                <div className="form-row-grid">
+                  <div className="form-group">
+                    <label>Phone Number</label>
+                    <input 
+                      type="tel" 
+                      value={phone} 
+                      onChange={(e) => setPhone(e.target.value)} 
+                      placeholder="+1 (555) 019-2834"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Email Address</label>
+                    <input 
+                      type="email" 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)} 
+                      placeholder="sarah@aetherstudio.com"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 3: Professional Title & Company Name */}
+                <div className="form-row-grid">
+                  <div className="form-group">
+                    <label>Professional Title</label>
+                    <input 
+                      type="text" 
+                      value={jobTitle} 
+                      onChange={(e) => setJobTitle(e.target.value)} 
+                      placeholder="Creative Director"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Office / Company Name</label>
+                    <input 
+                      type="text" 
+                      value={company} 
+                      onChange={(e) => setCompany(e.target.value)} 
+                      placeholder="Aether Studio"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: Bio & About */}
+            {activeEditorTab === 'bio' && (
+              <div className="form-section">
+                <h3><User size={16} /> Bio & About Us</h3>
+                
+                <div className="form-group full-width">
+                  <label>Bio / Description (Shown on Home page)</label>
+                  <textarea 
+                    rows="3"
+                    value={bio} 
+                    onChange={(e) => setBio(e.target.value)} 
+                    placeholder="Briefly describe your services or profile..."
+                  />
+                  <p className="help-text">This bio is displayed on the main home screen of your digital card.</p>
+                </div>
+
+                <div className="form-group full-width" style={{ marginTop: '1rem' }}>
+                  <label>About Us Details (Shown on About Us screen)</label>
+                  <textarea 
+                    rows="6"
+                    value={aboutUs} 
+                    onChange={(e) => setAboutUs(e.target.value)} 
+                    placeholder="Provide detailed information about your business, history, philosophy, or team..."
+                  />
+                  <p className="help-text">Detailed info that appears exclusively on the "About Us" tab of your card.</p>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 3: Services */}
+            {activeEditorTab === 'services' && (
+              <div className="form-section">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h3>Our Services</h3>
+                  <button 
+                    type="button" 
+                    className="add-service-btn" 
+                    onClick={handleAddService}
+                    style={{
+                      background: 'var(--accent-color)',
+                      color: '#000',
+                      border: 'none',
+                      padding: '0.4rem 0.8rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: 'bold',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}
+                  >
+                    <Plus size={14} /> Add Service
+                  </button>
+                </div>
+                
+                <div className="services-dynamic-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {servicesList.map((service, index) => (
+                    <div key={index} className="dynamic-service-item" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <span style={{ color: 'var(--accent-color)', fontWeight: 'bold' }}>{index + 1}.</span>
+                      <input 
+                        type="text" 
+                        value={service} 
+                        onChange={(e) => handleServiceChange(index, e.target.value)} 
+                        placeholder={`Service #${index + 1} (e.g. Web Development)`}
+                        style={{ flex: 1 }}
+                      />
+                      <button 
+                        type="button" 
+                        className="remove-service-btn"
+                        onClick={() => handleRemoveService(index)}
+                        style={{
+                          background: 'rgba(239, 68, 68, 0.1)',
+                          color: '#ef4444',
+                          border: '1px solid rgba(239, 68, 68, 0.2)',
+                          padding: '0.5rem',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tab 4: Social Profiles */}
+            {activeEditorTab === 'socials' && (
+              <div className="form-section">
+                <h3><Share2 size={16} /> Social Profiles</h3>
+                <div className="form-row-grid">
+                  <div className="form-group">
+                    <label>
+                      <i className="fa-brands fa-linkedin-in" style={{ color: '#0a66c2', marginRight: '0.4rem' }}></i> LinkedIn
+                    </label>
+                    <input 
+                      type="url" 
+                      value={socials.lnkLinkedIn || ''} 
+                      onChange={(e) => handleSocialChange('lnkLinkedIn', e.target.value)} 
+                      placeholder="https://linkedin.com/in/..."
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>
+                      <i className="fa-brands fa-x-twitter" style={{ color: '#fff', marginRight: '0.4rem' }}></i> X
+                    </label>
+                    <input 
+                      type="url" 
+                      value={socials.lnkTwitter || ''} 
+                      onChange={(e) => handleSocialChange('lnkTwitter', e.target.value)} 
+                      placeholder="https://x.com/..."
+                    />
+                  </div>
+                </div>
+                <div className="form-row-grid">
+                  <div className="form-group">
+                    <label>
+                      <i className="fa-brands fa-facebook-f" style={{ color: '#1877f2', marginRight: '0.4rem' }}></i> Facebook
+                    </label>
+                    <input 
+                      type="url" 
+                      value={socials.lnkFb || ''} 
+                      onChange={(e) => handleSocialChange('lnkFb', e.target.value)} 
+                      placeholder="https://facebook.com/..."
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>
+                      <i className="fa-brands fa-instagram" style={{ color: '#e1306c', marginRight: '0.4rem' }}></i> Instagram
+                    </label>
+                    <input 
+                      type="url" 
+                      value={socials.lnkInsta || ''} 
+                      onChange={(e) => handleSocialChange('lnkInsta', e.target.value)} 
+                      placeholder="https://instagram.com/..."
+                    />
+                  </div>
+                </div>
+                <div className="form-row-grid">
+                  <div className="form-group">
+                    <label>
+                      <i className="fa-brands fa-whatsapp" style={{ color: '#25d366', marginRight: '0.4rem' }}></i> WhatsApp
+                    </label>
+                    <input 
+                      type="text" 
+                      value={socials.lnkWa || ''} 
+                      onChange={(e) => handleSocialChange('lnkWa', e.target.value)} 
+                      placeholder="Country code + number"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>
+                      <i className="fa-solid fa-map-pin" style={{ color: '#ea4335', marginRight: '0.4rem' }}></i> Google
+                    </label>
+                    <input 
+                      type="url" 
+                      value={gmap} 
+                      onChange={(e) => setGmap(e.target.value)} 
+                      placeholder="https://maps.google.com/?q=..."
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 5: Branding & Design */}
+            {activeEditorTab === 'branding' && (
+              <div className="form-section">
+                <h3><Palette size={16} /> Design & Theme</h3>
+                <div className="form-row-grid">
+                  <div className="form-group">
+                    <label>Card Style Theme</label>
+                    <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+                      <option value="aura-glass">Aura Glass (Glassmorphism)</option>
+                      <option value="sunset-breeze">Sunset Breeze (Warm Minimalist)</option>
+                      <option value="matrix-cyber">Matrix Cyber (Futuristic)</option>
+                      <option value="neo-slate">Neo-Slate (Soft UI / Neomorphic)</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Accent Glow Color</label>
+                    <div className="color-picker-wrapper">
+                      <input 
+                        type="color" 
+                        value={accentColor} 
+                        onChange={(e) => setAccentColor(e.target.value)} 
+                        disabled={theme === 'matrix-cyber'}
+                      />
+                      <span className="color-value">{accentColor.toUpperCase()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row-grid" style={{ marginTop: '1rem' }}>
+                  <div className="form-group">
+                    <label>Validity Expiry Date</label>
+                    <div className="modern-date-input-wrapper" onClick={handleWrapperClick}>
+                      <Calendar size={16} style={{ color: 'var(--accent-color)', marginLeft: '0.75rem', marginRight: '0.25rem', pointerEvents: 'none' }} />
+                      <input 
+                        ref={dateInputRef}
+                        type="date" 
+                        value={expiryDate} 
+                        onChange={(e) => setExpiryDate(e.target.value)} 
+                        required 
                       />
                     </div>
-                    <label className="upload-custom-avatar-btn" style={{
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      borderRadius: '8px',
-                      color: '#fff',
-                      padding: '0.5rem 1rem',
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                      fontWeight: '500',
-                      whiteSpace: 'nowrap'
-                    }}>
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={handleCustomAvatar}
-                        style={{ display: 'none' }} 
-                      />
-                      Choose File
-                    </label>
+                    <p className="help-text">Digital card will expire after this date.</p>
                   </div>
-                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.7rem', color: '#64748b' }}>Square format recommended.</p>
-                </div>
-              </div>
-            </div>
 
-            {/* Section 3: Template & Appearance */}
-            <div className="form-section">
-              <h3><Palette size={16} /> Design & Theme</h3>
-              <div className="form-row-grid">
-                <div className="form-group">
-                  <label>Card Style Theme</label>
-                  <select value={theme} onChange={(e) => setTheme(e.target.value)}>
-                    <option value="aura-glass">Aura Glass (Glassmorphism)</option>
-                    <option value="sunset-breeze">Sunset Breeze (Warm Minimalist)</option>
-                    <option value="matrix-cyber">Matrix Cyber (Futuristic)</option>
-                    <option value="neo-slate">Neo-Slate (Soft UI / Neomorphic)</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Accent Glow Color</label>
-                  <div className="color-picker-wrapper">
-                    <input 
-                      type="color" 
-                      value={accentColor} 
-                      onChange={(e) => setAccentColor(e.target.value)} 
-                      disabled={theme === 'matrix-cyber'}
-                    />
-                    <span className="color-value">{accentColor.toUpperCase()}</span>
+                  <div className="form-group">
+                    <label>Upload Profile Photo</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.25rem' }}>
+                      <div className="current-avatar-preview" style={{
+                        width: '45px',
+                        height: '45px',
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        border: '2px solid var(--accent-color)',
+                        background: 'rgba(0,0,0,0.2)',
+                        flexShrink: 0
+                      }}>
+                        <img 
+                          src={avatarUrl || DEFAULT_AVATAR} 
+                          alt="Avatar Preview" 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                        />
+                      </div>
+                      <label className="upload-custom-avatar-btn" style={{
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        padding: '0.5rem 1rem',
+                        fontSize: '0.8rem',
+                        cursor: 'pointer',
+                        fontWeight: '500',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          onChange={handleCustomAvatar}
+                          style={{ display: 'none' }} 
+                        />
+                        Choose File
+                      </label>
+                    </div>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.7rem', color: '#64748b' }}>Square format recommended.</p>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Section 4: Social Profiles */}
-            <div className="form-section">
-              <h3><Share2 size={16} /> Social Profiles</h3>
-              <div className="form-row-grid">
-                <div className="form-group">
-                  <label>
-                    <i className="fa-brands fa-linkedin-in" style={{ color: '#0a66c2', marginRight: '0.4rem' }}></i> LinkedIn
-                  </label>
-                  <input 
-                    type="url" 
-                    value={socials.lnkLinkedIn || ''} 
-                    onChange={(e) => handleSocialChange('lnkLinkedIn', e.target.value)} 
-                    placeholder="https://linkedin.com/in/..."
-                  />
-                </div>
-                <div className="form-group">
-                  <label>
-                    <i className="fa-brands fa-x-twitter" style={{ color: '#fff', marginRight: '0.4rem' }}></i> X
-                  </label>
-                  <input 
-                    type="url" 
-                    value={socials.lnkTwitter || ''} 
-                    onChange={(e) => handleSocialChange('lnkTwitter', e.target.value)} 
-                    placeholder="https://x.com/..."
-                  />
-                </div>
-              </div>
-              <div className="form-row-grid">
-                <div className="form-group">
-                  <label>
-                    <i className="fa-brands fa-facebook-f" style={{ color: '#1877f2', marginRight: '0.4rem' }}></i> Facebook
-                  </label>
-                  <input 
-                    type="url" 
-                    value={socials.lnkFb || ''} 
-                    onChange={(e) => handleSocialChange('lnkFb', e.target.value)} 
-                    placeholder="https://facebook.com/..."
-                  />
-                </div>
-                <div className="form-group">
-                  <label>
-                    <i className="fa-brands fa-instagram" style={{ color: '#e1306c', marginRight: '0.4rem' }}></i> Instagram
-                  </label>
-                  <input 
-                    type="url" 
-                    value={socials.lnkInsta || ''} 
-                    onChange={(e) => handleSocialChange('lnkInsta', e.target.value)} 
-                    placeholder="https://instagram.com/..."
-                  />
-                </div>
-              </div>
-              <div className="form-row-grid">
-                <div className="form-group">
-                  <label>
-                    <i className="fa-brands fa-whatsapp" style={{ color: '#25d366', marginRight: '0.4rem' }}></i> WhatsApp
-                  </label>
-                  <input 
-                    type="text" 
-                    value={socials.lnkWa || ''} 
-                    onChange={(e) => handleSocialChange('lnkWa', e.target.value)} 
-                    placeholder="Country code + number"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>
-                    <i className="fa-solid fa-map-pin" style={{ color: '#ea4335', marginRight: '0.4rem' }}></i> Google
-                  </label>
-                  <input 
-                    type="url" 
-                    value={gmap} 
-                    onChange={(e) => setGmap(e.target.value)} 
-                    placeholder="https://maps.google.com/?q=..."
-                  />
-                </div>
-              </div>
-            </div>
+            )}
           </form>
         </div>
 

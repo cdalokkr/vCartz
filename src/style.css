@@ -1913,6 +1913,13 @@ body {
 .logout-btn:hover {
   background: rgba(239, 68, 68, 0.05);
 }
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
 .dashboard-content {
   flex: 1;
   padding: 2.5rem 3rem;
@@ -3067,12 +3074,9 @@ body {
   align-items: center;
   justify-content: space-between;
   background: #06090f;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 0.75rem 1.5rem;
-  margin-bottom: 2rem;
-  position: sticky;
-  top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem 3rem;
+  position: static;
   z-index: 100;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
@@ -3272,8 +3276,8 @@ body {
   }
 
   .dashboard-top-bar {
-    padding: 0.5rem 1rem;
-    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0;
   }
 
   /* Grid layout responsive stack overrides */
@@ -3623,7 +3627,8 @@ body {
 }
 .light-theme .dashboard-top-bar {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 .light-theme .top-bar-title {
@@ -3754,6 +3759,85 @@ body {
 }
 .light-theme .upload-avatar-btn:hover {
   background: #f1f5f9;
+}
+
+/* Card Editor Tabs Styling */
+.editor-tabs-nav {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+  scrollbar-width: none;
+}
+.editor-tabs-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.editor-tab-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.editor-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.editor-tab-btn.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.15);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+}
+
+/* Light Theme overrides for editor tabs */
+.light-theme .editor-tabs-nav {
+  border-bottom: 1px solid #e2e8f0;
+}
+.light-theme .editor-tab-btn {
+  color: #64748b;
+}
+.light-theme .editor-tab-btn:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+.light-theme .editor-tab-btn.active {
+  color: #0f172a;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  box-shadow: none;
+}
+
+/* Dynamic Services styling overrides */
+.dynamic-service-item input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+}
+.light-theme .dynamic-service-item input {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+.add-service-btn:hover {
+  filter: brightness(1.1);
+}
+.remove-service-btn:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
 }
 
 

@@ -397,8 +397,8 @@ export default function Dashboard({ user, token, onLogout, updateSEO, onUpdateUs
         </button>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="dashboard-content">
+      {/* Main Panel Wrapper */}
+      <div className="dashboard-main">
         
         {/* Top Header Bar */}
         <div className="dashboard-top-bar">
@@ -448,6 +448,9 @@ export default function Dashboard({ user, token, onLogout, updateSEO, onUpdateUs
             </div>
           </div>
         </div>
+
+        {/* Scrollable Content Area */}
+        <main className="dashboard-content">
         
         {/* CARD EDITOR INTERFACE (Rendered as Modal Overlay) */}
         {editingCard && (
@@ -1197,7 +1200,8 @@ export default function Dashboard({ user, token, onLogout, updateSEO, onUpdateUs
             </div>
           </div>
         ) : null}
-      </main>
+        </main>
+      </div>
 
       {toast.show && (
         <div className={`toast-notification toast-${toast.type}`}>
