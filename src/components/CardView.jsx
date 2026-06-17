@@ -465,7 +465,8 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
 
                   <div className="card-profile-summary">
                     <p className="card-summary-name">{card.name}</p>
-                    <p className="card-summary-title">{card.job_title} at {card.company || 'Freelance'}</p>
+                    {card.job_title && <p className="card-summary-title">{card.job_title}</p>}
+                    {card.company && <p className="card-summary-company">{card.company}</p>}
                   </div>
 
                   {card.bio && (
@@ -768,8 +769,18 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
             <p>Scan this QR code with another mobile phone to open and save this visiting card directly.</p>
             
             <div className="qr-code-container">
-              <img src={qrCodeUrl} alt="Card QR Code" />
+              <img 
+                src={qrCodeUrl} 
+                alt="Card QR Code" 
+                onLoad={(e) => e.target.classList.add('loaded')}
+              />
+              <div className="qr-loading-spinner"></div>
             </div>
+            {card.slug && (
+              <div className="qr-card-slug">
+                @{card.slug.toUpperCase()}
+              </div>
+            )}
             
             <div className="qr-actions">
               <button 
