@@ -2591,10 +2591,10 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(var(--accent-rgb), 0.05);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop);
+  -webkit-backdrop-filter: var(--card-backdrop);
+  border-bottom: var(--card-border);
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
@@ -3540,6 +3540,201 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* --- Theme Toggle Button --- */
+.theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+.light-theme .theme-toggle-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #475569;
+}
+
+.light-theme .theme-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+}
+
+/* --- Light Theme Dashboard Styling --- */
+.light-theme .dashboard-container {
+  background-color: #f8fafc;
+}
+.light-theme .dashboard-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+}
+.light-theme .dashboard-sidebar .logo h2 {
+  color: #0f172a;
+}
+.light-theme .dashboard-sidebar .logo span {
+  color: var(--accent-color);
+}
+.light-theme .user-badge {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .user-email {
+  color: #0f172a;
+}
+.light-theme .sidebar-nav-btn {
+  color: #475569;
+}
+.light-theme .sidebar-nav-btn:hover,
+.light-theme .sidebar-nav-btn.active {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.light-theme .dashboard-top-bar {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .top-bar-title {
+  color: #0f172a;
+}
+.light-theme .dropdown-user-details p {
+  color: #0f172a;
+}
+.light-theme .user-profile-dropdown {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.light-theme .dropdown-item-settings-btn {
+  color: #475569;
+}
+.light-theme .dropdown-item-settings-btn:hover {
+  background: #f1f5f9;
+}
+.light-theme .dashboard-content h2,
+.light-theme .dashboard-content h3,
+.light-theme .dashboard-content p,
+.light-theme .dashboard-content th,
+.light-theme .dashboard-content td {
+  color: #0f172a;
+}
+.light-theme .stats-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .stat-label {
+  color: #475569;
+}
+.light-theme .stat-number {
+  color: #0f172a;
+}
+.light-theme .card-item-row {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .card-item-title {
+  color: #0f172a;
+}
+.light-theme .card-item-slug {
+  color: #475569;
+}
+.light-theme .row-action-btn.view {
+  background: rgba(211, 178, 13, 0.1);
+  color: var(--accent-color);
+}
+.light-theme .row-action-btn.edit {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+.light-theme .row-action-btn.analytics {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.light-theme .row-action-btn.delete {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+.light-theme .analytics-metric-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .analytics-metric-card h3 {
+  color: #475569;
+}
+.light-theme .analytics-metric-card .metric-value {
+  color: #0f172a;
+}
+.light-theme .chart-container {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .whitelabel-settings-grid {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .nfc-guide-wrapper {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .editor-modal-container {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .editor-modal-header {
+  border-bottom: 1px solid #e2e8f0;
+}
+.light-theme .editor-modal-header h2 {
+  color: #0f172a;
+}
+.light-theme .editor-modal-footer {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+.light-theme .customizer-sidebar {
+  border-right: 1px solid #e2e8f0;
+}
+.light-theme .form-section {
+  border-bottom: 1px solid #e2e8f0;
+}
+.light-theme .form-group label {
+  color: #0f172a;
+}
+.light-theme .form-group input,
+.light-theme .form-group textarea,
+.light-theme .form-group select {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+.light-theme .form-group input:focus,
+.light-theme .form-group textarea:focus,
+.light-theme .form-group select:focus {
+  border-color: var(--accent-color);
+}
+.light-theme .settings-avatar-section {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+.light-theme .upload-avatar-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+.light-theme .upload-avatar-btn:hover {
+  background: #f1f5f9;
 }
 
 

@@ -415,7 +415,11 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
       <div className="ambient-glow"></div>
 
       {/* TOP STICKY HEADER (Shrinks on other tabs) */}
-      <header className={`card-sticky-header ${activeTab !== 'home' ? 'shrink' : ''}`}>
+      <header 
+        className={`card-sticky-header ${activeTab !== 'home' ? 'shrink' : ''}`}
+        onClick={() => setActiveTab('home')}
+        style={{ cursor: 'pointer' }}
+      >
         <div className="header-avatar-container">
           <img src={card.avatar_url || DEFAULT_AVATAR} alt={card.name} />
         </div>

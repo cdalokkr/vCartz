@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Plus, LogOut, Link, BarChart3, Edit3, Trash2, Globe, Settings, CreditCard, 
   Copy, CheckCircle, Wifi, Users, UserPlus, ArrowLeft, Eye, MousePointer, AlertTriangle, Sparkles,
-  Menu, X
+  Menu, X, Sun, Moon
 } from 'lucide-react';
 import CardEditor from './CardEditor.jsx';
 
@@ -24,6 +24,25 @@ export default function Dashboard({ user, token, onLogout, updateSEO, onUpdateUs
   const [newPassword, setNewPassword] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
   const [savingSettings, setSavingSettings] = useState(false);
+
+  const [dashboardTheme, setDashboardTheme] = useState(() => {
+    return localStorage.getItem('dashboard_theme') || 'dark';
+  });
+
+  useEffect(() => {
+    if (dashboardTheme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+    localStorage.setItem('dashboard_theme', dashboardTheme);
+  }, [dashboardTheme]);
+
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove('light-theme');
+    };
+  }, []);
 
   useEffect(() => {
     setAvatarUrl(user?.avatar_url || '');
@@ -395,28 +414,38 @@ export default function Dashboard({ user, token, onLogout, updateSEO, onUpdateUs
             {activeTab === 'nfc' && 'NFC Tag Configuration'}
           </div>
 
-          <div className="user-profile-menu-container">
-            <button className="user-profile-avatar-btn" onClick={() => setUserMenuOpen(!userMenuOpen)}>
-              <img src={user.avatar_url || DEFAULT_AVATAR} alt="User Avatar" />
+          <div className="top-bar-right-controls" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+            <button 
+              className="theme-toggle-btn" 
+              onClick={() => setDashboardTheme(dashboardTheme === 'dark' ? 'light' : 'dark')}
+              title={`Switch to ${dashboardTheme === 'dark' ? 'Light' : 'Dark'} Mode`}
+            >
+              {dashboardTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
-            {userMenuOpen && (
-              <div className="user-profile-dropdown">
-                <div className="dropdown-user-details">
-                  <p className="dropdown-user-email">{user.email}</p>
-                  <span className="dropdown-user-role">Administrator</span>
+
+            <div className="user-profile-menu-container">
+              <button className="user-profile-avatar-btn" onClick={() => setUserMenuOpen(!userMenuOpen)}>
+                <img src={user.avatar_url || DEFAULT_AVATAR} alt="User Avatar" />
+              </button>
+              {userMenuOpen && (
+                <div className="user-profile-dropdown">
+                  <div className="dropdown-user-details">
+                    <p className="dropdown-user-email">{user.email}</p>
+                    <span className="dropdown-user-role">Administrator</span>
+                  </div>
+                  <hr className="dropdown-divider" />
+                  <button 
+                    className="dropdown-item-settings-btn" 
+                    onClick={() => { setUserMenuOpen(false); setSettingsModalOpen(true); }}
+                  >
+                    <Settings size={14} /> Account Settings
+                  </button>
+                  <button className="dropdown-item-logout-btn" onClick={() => { setUserMenuOpen(false); onLogout(); }}>
+                    <LogOut size={14} /> Log Out
+                  </button>
                 </div>
-                <hr className="dropdown-divider" />
-                <button 
-                  className="dropdown-item-settings-btn" 
-                  onClick={() => { setUserMenuOpen(false); setSettingsModalOpen(true); }}
-                >
-                  <Settings size={14} /> Account Settings
-                </button>
-                <button className="dropdown-item-logout-btn" onClick={() => { setUserMenuOpen(false); onLogout(); }}>
-                  <LogOut size={14} /> Log Out
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
         
@@ -434,84 +463,89 @@ export default function Dashboard({ user, token, onLogout, updateSEO, onUpdateUs
 
         {/* ACCOUNT SETTINGS MODAL */}
         {settingsModalOpen && (
-          <div className="modal-overlay" style={{ zIndex: 999 }}>
-            <div className="modal-container settings-modal">
-              <div className="modal-header">
-                <h3>Account Settings</h3>
-                <button className="close-btn" onClick={() => setSettingsModalOpen(false)}>
+          <div className="editor-modal-overlay">
+            <div className="editor-modal-container settings-modal">
+              <div className="editor-modal-header">
+                <div>
+                  <h2>Account Settings</h2>
+                  <p>Update your login credentials and profile picture</p>
+                </div>
+                <button className="editor-modal-close-btn" onClick={() => setSettingsModalOpen(false)}>
                   <X size={20} />
                 </button>
               </div>
-              <form onSubmit={handleSaveSettings} className="settings-form">
-                <div className="form-group">
-                  <label>Profile Photo</label>
-                  <div className="settings-avatar-section">
-                    <img 
-                      src={avatarUrl || DEFAULT_AVATAR} 
-                      alt="User Avatar" 
-                      className="settings-avatar-preview"
-                    />
-                    <div className="settings-avatar-actions">
-                      <label className="upload-avatar-btn">
-                        Upload Photo
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          onChange={handleSettingsAvatarUpload} 
-                          style={{ display: 'none' }}
-                        />
-                      </label>
-                      {avatarUrl && (
-                        <button 
-                          type="button" 
-                          className="remove-avatar-btn" 
-                          onClick={() => setAvatarUrl('')}
-                        >
-                          Remove
-                        </button>
-                      )}
+              <div className="editor-modal-body">
+                <form id="settings-form" onSubmit={handleSaveSettings} className="settings-form">
+                  <div className="form-group">
+                    <label>Profile Photo</label>
+                    <div className="settings-avatar-section">
+                      <img 
+                        src={avatarUrl || DEFAULT_AVATAR} 
+                        alt="User Avatar" 
+                        className="settings-avatar-preview"
+                      />
+                      <div className="settings-avatar-actions">
+                        <label className="upload-avatar-btn">
+                          Upload Photo
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={handleSettingsAvatarUpload} 
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                        {avatarUrl && (
+                          <button 
+                            type="button" 
+                            className="remove-avatar-btn" 
+                            onClick={() => setAvatarUrl('')}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="form-group">
-                  <label>Email Address</label>
-                  <input 
-                    type="email" 
-                    value={user?.email || ''} 
-                    disabled 
-                    className="disabled-input" 
-                  />
-                  <small className="help-text">Email address is read-only.</small>
-                </div>
+                  
+                  <div className="form-group">
+                    <label>Email Address</label>
+                    <input 
+                      type="email" 
+                      value={user?.email || ''} 
+                      disabled 
+                      className="disabled-input" 
+                    />
+                    <small className="help-text">Email address is read-only.</small>
+                  </div>
 
-                <div className="form-group">
-                  <label>New Password</label>
-                  <input 
-                    type="password" 
-                    placeholder="Leave blank to keep current password" 
-                    value={newPassword} 
-                    onChange={(e) => setNewPassword(e.target.value)} 
-                  />
-                </div>
-
-                <div className="modal-actions">
-                  <button 
-                    type="button" 
-                    className="btn-secondary" 
-                    onClick={() => setSettingsModalOpen(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    type="submit" 
-                    className="btn-primary"
-                    disabled={savingSettings}
-                  >
-                    {savingSettings ? 'Saving...' : 'Save Changes'}
-                  </button>
-                </div>
-              </form>
+                  <div className="form-group">
+                    <label>New Password</label>
+                    <input 
+                      type="password" 
+                      placeholder="Leave blank to keep current password" 
+                      value={newPassword} 
+                      onChange={(e) => setNewPassword(e.target.value)} 
+                    />
+                  </div>
+                </form>
+              </div>
+              <div className="editor-modal-footer">
+                <button 
+                  type="button" 
+                  className="cancel-editor-btn" 
+                  onClick={() => setSettingsModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  form="settings-form"
+                  className="save-editor-btn"
+                  disabled={savingSettings}
+                >
+                  {savingSettings ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
             </div>
           </div>
         )}
