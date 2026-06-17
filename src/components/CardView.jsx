@@ -219,6 +219,30 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
     });
   };
 
+  // Native share sheet trigger
+  const handleNativeShare = async () => {
+    logClickAnalytics('click_share_native');
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: card.name,
+          text: card.job_title ? `${card.job_title} at ${card.company || ''}` : 'Digital Business Card',
+          url: window.location.href
+        });
+      } catch (err) {
+        console.log('Error sharing:', err);
+      }
+    } else {
+      // Fallback
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard! You can paste and share it in any app.");
+      } catch (err) {
+        console.error('Clipboard error:', err);
+      }
+    }
+  };
+
   // Social brand colors helper
   const getSocialStyle = (key) => {
     const colors = {
@@ -514,31 +538,6 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
               </div>
             </div>
 
-            {/* Public Utility bar */}
-            <div className="vcard-utilities">
-              <button className={`util-btn ${copiedShare ? 'copied-success' : ''}`} onClick={handleShareLink}>
-                {copiedShare ? (
-                  <>
-                    <CheckCircle size={16} style={{ color: '#34d399' }} />
-                    <span style={{ color: '#34d399' }}>Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 size={16} />
-                    <span>Share Link</span>
-                  </>
-                )}
-              </button>
-              <button className="util-btn" onClick={() => { setQrOpen(true); logClickAnalytics('view_qr'); }}>
-                <QrCode size={16} />
-                <span>My QR</span>
-              </button>
-              <button className="util-btn primary-util-btn" onClick={handleSaveContact}>
-                <UserPlus size={16} />
-                <span>Save Contact</span>
-              </button>
-            </div>
-
           </div>
         )}
 
@@ -691,6 +690,43 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
           </div>
         )}
 
+        {/* MY QR CODE TAB */}
+        {activeTab === 'qr' && (
+          <div className="viewer-tab-content tab-qr-view">
+            <div className="qr-tab-card">
+              <h3>My QR Code</h3>
+              <p>Scan this QR code with another mobile phone to open and save this visiting card directly.</p>
+              
+              <div className="qr-code-container">
+                <img 
+                  src={qrCodeUrl} 
+                  alt="Card QR Code" 
+                  onLoad={(e) => e.target.classList.add('loaded')}
+                />
+                <div className="qr-loading-spinner"></div>
+              </div>
+              
+              {card.slug && (
+                <div className="qr-card-slug">
+                  @{card.slug.toUpperCase()}
+                </div>
+              )}
+              
+              <div className="qr-actions">
+                <button 
+                  className="qr-share-native-btn" 
+                  onClick={handleNativeShare}
+                >
+                  <Share2 size={18} /> Share Digital Card
+                </button>
+                <button className="qr-save-contact-btn" onClick={handleSaveContact}>
+                  <UserPlus size={18} /> Save Contact
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ABOUT US TAB */}
         {activeTab === 'about' && (
           <div className="viewer-tab-content tab-about-view">
@@ -750,6 +786,13 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
           <span>Contacts</span>
         </button>
         <button 
+          className={`nav-tab-btn ${activeTab === 'qr' ? 'active' : ''}`}
+          onClick={() => setActiveTab('qr')}
+        >
+          <QrCode size={20} />
+          <span>My QR</span>
+        </button>
+        <button 
           className={`nav-tab-btn ${activeTab === 'about' ? 'active' : ''}`}
           onClick={() => setActiveTab('about')}
         >
@@ -757,54 +800,6 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
           <span>About Us</span>
         </button>
       </nav>
-
-      {/* MY QR CODE MODAL OVERLAY */}
-      {qrOpen && (
-        <div className="qr-modal-overlay active" onClick={() => setQrOpen(false)}>
-          <div className="qr-modal-card" onClick={(e) => e.stopPropagation()}>
-            <button className="qr-modal-close" onClick={() => setQrOpen(false)}>
-              <X size={18} />
-            </button>
-            <h3>My QR Code</h3>
-            <p>Scan this QR code with another mobile phone to open and save this visiting card directly.</p>
-            
-            <div className="qr-code-container">
-              <img 
-                src={qrCodeUrl} 
-                alt="Card QR Code" 
-                onLoad={(e) => e.target.classList.add('loaded')}
-              />
-              <div className="qr-loading-spinner"></div>
-            </div>
-            {card.slug && (
-              <div className="qr-card-slug">
-                @{card.slug.toUpperCase()}
-              </div>
-            )}
-            
-            <div className="qr-actions">
-              <button 
-                className={`qr-copy-btn ${copiedQr ? 'copied-success' : ''}`} 
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  setCopiedQr(true);
-                  setTimeout(() => setCopiedQr(false), 2000);
-                }}
-              >
-                {copiedQr ? (
-                  <>
-                    <CheckCircle size={16} style={{ color: '#34d399' }} /> Copied Link!
-                  </>
-                ) : (
-                  <>
-                    <Copy size={16} /> Copy URL Link
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );

@@ -3552,8 +3552,8 @@ body {
 
   /* Compact the inner spacing on mobile home tab to prevent overflow */
   .public-card-viewer.tab-home .card-inner {
-    padding: 1.25rem 1rem;
-    gap: 0.85rem;
+    padding: 0.75rem 0.85rem;
+    gap: 0.65rem;
   }
 
   /* Show embedded avatar inside the card on mobile home page tab */
@@ -3561,8 +3561,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+    margin-top: 0.15rem;
+    margin-bottom: 0.15rem;
   }
 
   .public-card-viewer.tab-home .card-avatar-embedded img {
@@ -3576,13 +3576,15 @@ body {
 
   .public-card-viewer.tab-home .card-header-embedded {
     margin-bottom: 0;
+    padding-top: 0.15rem;
+    padding-bottom: 0.15rem;
   }
 
   /* Lock scrolling for home page tab to fit in the viewport */
   .public-card-viewer.tab-home .card-viewer-body {
     overflow-y: hidden !important;
     justify-content: center;
-    padding-top: 0.5rem;
+    padding-top: 0.25rem;
     padding-bottom: 6.5rem; /* Safe padding above bottom nav bar */
     height: calc(100vh - 1.5rem);
   }
@@ -3593,6 +3595,7 @@ body {
 
   .public-card-viewer.tab-home .vcard-card {
     min-height: auto; /* Allow auto-sizing to fit viewport nicely */
+    border-radius: 20px; /* Reduced from 28px to save vertical space on mobile headers */
   }
 
   /* Smooth animations for switching tabs */
@@ -3890,6 +3893,109 @@ body {
 }
 .remove-service-btn:hover {
   background: rgba(239, 68, 68, 0.2) !important;
+}
+
+/* QR Tab Panel Styling */
+.tab-qr-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+}
+
+.qr-tab-card {
+  width: 100%;
+  max-width: 350px;
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop);
+  -webkit-backdrop-filter: var(--card-backdrop);
+  border: var(--card-border);
+  border-radius: 28px;
+  padding: 2.25rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: var(--card-shadow);
+  transform: translateZ(30px);
+}
+
+.qr-tab-card h3 {
+  font-size: 1.35rem;
+  font-weight: 750;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.qr-tab-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.qr-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.qr-share-native-btn {
+  width: 100%;
+  background: var(--accent-color);
+  color: #000;
+  border: none;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.3);
+  transition: var(--transition-fast);
+}
+
+.qr-share-native-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.45);
+}
+
+.qr-save-contact-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 650;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: var(--transition-fast);
+}
+
+.qr-save-contact-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.light-theme .qr-save-contact-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+.light-theme .qr-save-contact-btn:hover {
+  background: #f1f5f9;
 }
 
 
