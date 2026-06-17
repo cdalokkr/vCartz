@@ -538,6 +538,14 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
               </div>
             </div>
 
+            {/* Public Utility bar */}
+            <div className="vcard-utilities">
+              <button className="util-btn primary-util-btn" onClick={handleSaveContact}>
+                <UserPlus size={16} />
+                <span>Save Contact</span>
+              </button>
+            </div>
+
           </div>
         )}
 
@@ -718,9 +726,6 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                   onClick={handleNativeShare}
                 >
                   <Share2 size={18} /> Share Digital Card
-                </button>
-                <button className="qr-save-contact-btn" onClick={handleSaveContact}>
-                  <UserPlus size={18} /> Save Contact
                 </button>
               </div>
             </div>
