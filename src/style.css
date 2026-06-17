@@ -445,7 +445,7 @@ body {
   background: var(--card-bg);
   backdrop-filter: var(--card-backdrop);
   -webkit-backdrop-filter: var(--card-backdrop);
-  border: var(--card-border);
+  border: 1.5px solid var(--accent-color);
   box-shadow: var(--card-shadow);
   transform-style: preserve-3d;
   transition: box-shadow 0.3s ease;
@@ -3545,6 +3545,27 @@ body {
 
 /* --- Mobile-Specific Layout (max-width: 768px) --- */
 @media (max-width: 768px) {
+  /* Expand card width generally on mobile for all tab pages */
+  .card-viewer-body {
+    padding: 1rem 0.75rem 6.5rem 0.75rem !important; /* Reduced left/right padding to 0.75rem (12px) to expand card width */
+  }
+
+  /* Expand bottom menu bar width and prevent text wrapping */
+  .bottom-nav {
+    width: calc(100% - 1.5rem) !important; /* Leaves exactly 0.75rem margin on each side to match the card */
+    max-width: 440px !important;
+    bottom: 1rem !important;
+  }
+
+  .nav-tab-btn {
+    padding: 0.5rem 0.25rem !important; /* Reduced button padding to make more room for 5 tabs */
+  }
+
+  .nav-tab-btn span {
+    white-space: nowrap !important; /* Prevent About Us from wrapping into two rows */
+    font-size: 0.625rem !important; /* Slightly smaller label to prevent clipping */
+  }
+
   /* On home page on mobile, hide the sticky header entirely */
   .public-card-viewer.tab-home .card-sticky-header {
     display: none !important;
@@ -3584,7 +3605,9 @@ body {
   .public-card-viewer.tab-home .card-viewer-body {
     overflow-y: hidden !important;
     justify-content: flex-start; /* Align card flush to the top! */
-    padding-top: 0 !important; /* Zero top padding on viewport! */
+    padding-top: 0.75rem !important; /* Margins match left/right margin exactly! */
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
     padding-bottom: 6.5rem; /* Safe padding above bottom nav bar */
     height: calc(100vh - 1.5rem);
   }
