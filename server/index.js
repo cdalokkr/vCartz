@@ -17,11 +17,44 @@ app.use(cors());
 // Set large limit to support base64 profile pictures uploads
 app.use(express.json({ limit: '5mb' }));
 
-// In-Memory Session Store: token -> userId
-const activeSessions = new Map();
-
 // Initialize database schema
 initDb();
+
+const JWT_SECRET = process.env.JWT_SECRET || 'vcardz_default_secret_key_12345';
+
+// Generate stateless token using Node.js built-in crypto
+function generateToken(userId) {
+  const expiry = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days expiry
+  const payload = `${userId}.${expiry}`;
+  const signature = crypto
+    .createHmac('sha256', JWT_SECRET)
+    .update(payload)
+    .digest('hex');
+  return `${payload}.${signature}`;
+}
+
+// Verify stateless token
+function verifyToken(token) {
+  if (!token) return null;
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  
+  const [userId, expiry, signature] = parts;
+  if (Date.now() > parseInt(expiry, 10)) {
+    return null; // Token expired
+  }
+  
+  const expectedPayload = `${userId}.${expiry}`;
+  const expectedSignature = crypto
+    .createHmac('sha256', JWT_SECRET)
+    .update(expectedPayload)
+    .digest('hex');
+    
+  if (signature === expectedSignature) {
+    return parseInt(userId, 10);
+  }
+  return null;
+}
 
 // --- AUTH MIDDLEWARE ---
 function authenticateToken(req, res, next) {
@@ -32,7 +65,7 @@ function authenticateToken(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized: Missing token' });
   }
   
-  const userId = activeSessions.get(token);
+  const userId = verifyToken(token);
   if (!userId) {
     return res.status(403).json({ error: 'Session expired: Please log in again' });
   }
@@ -82,9 +115,8 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Generate Session Token
-    const token = crypto.randomBytes(32).toString('hex');
-    activeSessions.set(token, user.id);
+    // Generate stateless token
+    const token = generateToken(user.id);
 
     res.json({
       token,
@@ -101,11 +133,6 @@ app.post('/api/auth/login', async (req, res) => {
 
 // Logout
 app.post('/api/auth/logout', authenticateToken, (req, res) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (token) {
-    activeSessions.delete(token);
-  }
   res.json({ message: 'Logged out successfully' });
 });
 

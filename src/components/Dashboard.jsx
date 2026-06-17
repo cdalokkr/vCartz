@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, LogOut, Link, BarChart3, Edit3, Trash2, Globe, Settings, CreditCard, 
-  Copy, CheckCircle, Wifi, Users, UserPlus, ArrowLeft, Eye, MousePointer, AlertTriangle, Sparkles
+  Copy, CheckCircle, Wifi, Users, UserPlus, ArrowLeft, Eye, MousePointer, AlertTriangle, Sparkles,
+  Menu, X
 } from 'lucide-react';
 import CardEditor from './CardEditor.jsx';
 
@@ -14,6 +15,9 @@ export default function Dashboard({ user, token, onLogout, updateSEO }) {
   const [editingCard, setEditingCard] = useState(null); // card object or 'new'
   const [viewingAnalytics, setViewingAnalytics] = useState(null); // card id
   const [analyticsData, setAnalyticsData] = useState(null);
+  
+  const [mobileSidebarActive, setMobileSidebarActive] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   
   // NFC Tag Mapping States
   const [selectedNfcCardId, setSelectedNfcCardId] = useState('');
@@ -247,8 +251,22 @@ export default function Dashboard({ user, token, onLogout, updateSEO }) {
         '--accent-rgb': '211, 178, 13'
       }}
     >
+      {/* Sidebar Backdrop Overlay on Mobile */}
+      {mobileSidebarActive && (
+        <div 
+          className="dashboard-sidebar-overlay" 
+          onClick={() => setMobileSidebarActive(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="dashboard-sidebar">
+      <aside className={`dashboard-sidebar ${mobileSidebarActive ? 'mobile-active' : ''}`}>
+        <div className="sidebar-mobile-header">
+          <button className="close-sidebar-btn" onClick={() => setMobileSidebarActive(false)}>
+            <X size={20} />
+          </button>
+        </div>
+
         <div className="logo">
           <h1>vCard<span>z</span></h1>
         </div>
@@ -261,19 +279,34 @@ export default function Dashboard({ user, token, onLogout, updateSEO }) {
         <nav className="sidebar-nav">
           <button 
             className={activeTab === 'cards' && !viewingAnalytics ? 'active' : ''} 
-            onClick={() => { setActiveTab('cards'); setViewingAnalytics(null); setEditingCard(null); }}
+            onClick={() => { 
+              setActiveTab('cards'); 
+              setViewingAnalytics(null); 
+              setEditingCard(null); 
+              setMobileSidebarActive(false); 
+            }}
           >
             <CreditCard size={18} /> My Digital Cards
           </button>
           <button 
             className={activeTab === 'whitelabel' ? 'active' : ''} 
-            onClick={() => { setActiveTab('whitelabel'); setViewingAnalytics(null); setEditingCard(null); }}
+            onClick={() => { 
+              setActiveTab('whitelabel'); 
+              setViewingAnalytics(null); 
+              setEditingCard(null); 
+              setMobileSidebarActive(false); 
+            }}
           >
             <Globe size={18} /> White-Label Settings
           </button>
           <button 
             className={activeTab === 'nfc' ? 'active' : ''} 
-            onClick={() => { setActiveTab('nfc'); setViewingAnalytics(null); setEditingCard(null); }}
+            onClick={() => { 
+              setActiveTab('nfc'); 
+              setViewingAnalytics(null); 
+              setEditingCard(null); 
+              setMobileSidebarActive(false); 
+            }}
           >
             <Wifi size={18} /> NFC Tag Mapping
           </button>
@@ -286,6 +319,39 @@ export default function Dashboard({ user, token, onLogout, updateSEO }) {
 
       {/* Main Content Area */}
       <main className="dashboard-content">
+        
+        {/* Top Header Bar */}
+        <div className="dashboard-top-bar">
+          <div className="mobile-menu-trigger">
+            <button onClick={() => setMobileSidebarActive(true)}>
+              <Menu size={22} />
+            </button>
+          </div>
+          
+          <div className="top-bar-title">
+            {activeTab === 'cards' && (viewingAnalytics ? 'Analytics Details' : 'Digital Cards')}
+            {activeTab === 'whitelabel' && 'White-Label Branding'}
+            {activeTab === 'nfc' && 'NFC Tag Configuration'}
+          </div>
+
+          <div className="user-profile-menu-container">
+            <button className="user-profile-avatar-btn" onClick={() => setUserMenuOpen(!userMenuOpen)}>
+              <img src={DEFAULT_AVATAR} alt="User Avatar" />
+            </button>
+            {userMenuOpen && (
+              <div className="user-profile-dropdown">
+                <div className="dropdown-user-details">
+                  <p className="dropdown-user-email">{user.email}</p>
+                  <span className="dropdown-user-role">Administrator</span>
+                </div>
+                <hr className="dropdown-divider" />
+                <button className="dropdown-item-logout-btn" onClick={() => { setUserMenuOpen(false); onLogout(); }}>
+                  <LogOut size={14} /> Log Out
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
         
         {/* CARD EDITOR INTERFACE (Rendered as Modal Overlay) */}
         {editingCard && (
