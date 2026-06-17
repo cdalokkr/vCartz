@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Home, Phone, Info, Mail, MapPin, MapPinHouse, Share2, QrCode, 
+  Home, Phone, Info, Mail, MapPin, MapPinHouse, LayoutList, Share2, QrCode, 
   UserPlus, Copy, X, Sparkles, Globe, Calendar, Building2, ArrowLeft, AlertTriangle, CreditCard, CheckCircle, Briefcase
 } from 'lucide-react';
 
@@ -577,7 +577,7 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                   .filter(Boolean)
                   .map((service, idx) => (
                     <li key={idx} className="service-item">
-                      <span className="service-icon">•</span>
+                      <LayoutList size={16} className="service-icon" />
                       <span className="service-text">{service}</span>
                     </li>
                   ))}

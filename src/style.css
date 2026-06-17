@@ -581,7 +581,7 @@ body {
   border-radius: 16px;
   padding: 0.65rem 0.5rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
@@ -590,6 +590,7 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
+  white-space: nowrap;
   transition: var(--transition-fast);
 }
 
@@ -3544,9 +3545,8 @@ body {
 
 .service-icon {
   color: var(--accent-color, #D3B20D);
-  font-weight: bold;
-  font-size: 1.2rem;
-  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
 }
 
 .service-text {
@@ -3611,6 +3611,10 @@ body {
     border: 3px solid var(--accent-color, #D3B20D);
     box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.25);
     object-fit: cover;
+  }
+
+  .public-card-viewer.tab-home .card-summary-address {
+    display: none !important; /* Hide physical address from home tab on mobile view */
   }
 
   .public-card-viewer.tab-home .vcard-utilities {
