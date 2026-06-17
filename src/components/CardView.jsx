@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Home, Phone, Info, Mail, MapPin, Share2, QrCode, 
-  UserPlus, Copy, X, Sparkles, Globe, Calendar, Building2, ArrowLeft, AlertTriangle, CreditCard, CheckCircle 
+  UserPlus, Copy, X, Sparkles, Globe, Calendar, Building2, ArrowLeft, AlertTriangle, CreditCard, CheckCircle, Briefcase
 } from 'lucide-react';
 
 const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='100%25' height='100%25' fill='%230f172a'/><circle cx='12' cy='8' r='4' fill='%23475569'/><path d='M4 20c0-3.3 3.3-6 8-6s8 2.7 8 6' fill='%23475569'/></svg>";
@@ -406,7 +406,7 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
 
   return (
     <div 
-      className={`public-card-viewer theme-${card.theme}`}
+      className={`public-card-viewer theme-${card.theme} tab-${activeTab}`}
       style={{
         '--accent-color': card.accent_color || '#D3B20D',
         '--accent-rgb': accentRgb
@@ -454,6 +454,10 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                   </div>
 
                   <div className="card-divider"></div>
+
+                  <div className="card-avatar-embedded">
+                    <img src={card.avatar_url || DEFAULT_AVATAR} alt={card.name} />
+                  </div>
 
                   <div className="card-profile-summary">
                     <p className="card-summary-name">{card.name}</p>
@@ -530,6 +534,27 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
               </button>
             </div>
 
+          </div>
+        )}
+
+        {/* SERVICES TAB */}
+        {activeTab === 'services' && card.services && card.services.trim() && (
+          <div className="viewer-tab-content tab-services-view">
+            <div className="services-card">
+              <h3>Our Services</h3>
+              <ul className="services-list">
+                {card.services
+                  .split('\n')
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+                  .map((service, idx) => (
+                    <li key={idx} className="service-item">
+                      <span className="service-icon">•</span>
+                      <span className="service-text">{service}</span>
+                    </li>
+                  ))}
+              </ul>
+            </div>
           </div>
         )}
 
@@ -703,6 +728,15 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
           <Home size={20} />
           <span>Home</span>
         </button>
+        {card.services && card.services.trim() && (
+          <button 
+            className={`nav-tab-btn ${activeTab === 'services' ? 'active' : ''}`}
+            onClick={() => setActiveTab('services')}
+          >
+            <Briefcase size={20} />
+            <span>Services</span>
+          </button>
+        )}
         <button 
           className={`nav-tab-btn ${activeTab === 'contacts' ? 'active' : ''}`}
           onClick={() => setActiveTab('contacts')}

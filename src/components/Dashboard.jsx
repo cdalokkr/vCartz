@@ -8,7 +8,7 @@ import CardEditor from './CardEditor.jsx';
 
 const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='100%25' height='100%25' fill='%230f172a'/><circle cx='12' cy='8' r='4' fill='%23475569'/><path d='M4 20c0-3.3 3.3-6 8-6s8 2.7 8 6' fill='%23475569'/></svg>";
 
-export default function Dashboard({ user, token, onLogout, updateSEO }) {
+export default function Dashboard({ user, token, onLogout, updateSEO, onUpdateUser }) {
   const [activeTab, setActiveTab] = useState('cards'); // cards, whitelabel, nfc
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,6 +18,67 @@ export default function Dashboard({ user, token, onLogout, updateSEO }) {
   
   const [mobileSidebarActive, setMobileSidebarActive] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  // User Settings States
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
+  const [savingSettings, setSavingSettings] = useState(false);
+
+  useEffect(() => {
+    setAvatarUrl(user?.avatar_url || '');
+  }, [user?.avatar_url]);
+
+  const handleSettingsAvatarUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 1.5 * 1024 * 1024) {
+      alert('Photo is too large. Choose a compressed image (< 1.5MB).');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setAvatarUrl(event.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+    setSavingSettings(true);
+    try {
+      const response = await fetch('/api/users/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          password: newPassword || undefined,
+          avatarUrl: avatarUrl
+        })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to save settings');
+      }
+
+      const data = await response.json();
+      alert('Profile updated successfully!');
+      if (onUpdateUser) {
+        onUpdateUser(data.user);
+      }
+      setSettingsModalOpen(false);
+      setNewPassword('');
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSavingSettings(false);
+    }
+  };
   
   // NFC Tag Mapping States
   const [selectedNfcCardId, setSelectedNfcCardId] = useState('');
@@ -336,7 +397,7 @@ export default function Dashboard({ user, token, onLogout, updateSEO }) {
 
           <div className="user-profile-menu-container">
             <button className="user-profile-avatar-btn" onClick={() => setUserMenuOpen(!userMenuOpen)}>
-              <img src={DEFAULT_AVATAR} alt="User Avatar" />
+              <img src={user.avatar_url || DEFAULT_AVATAR} alt="User Avatar" />
             </button>
             {userMenuOpen && (
               <div className="user-profile-dropdown">
@@ -345,6 +406,12 @@ export default function Dashboard({ user, token, onLogout, updateSEO }) {
                   <span className="dropdown-user-role">Administrator</span>
                 </div>
                 <hr className="dropdown-divider" />
+                <button 
+                  className="dropdown-item-settings-btn" 
+                  onClick={() => { setUserMenuOpen(false); setSettingsModalOpen(true); }}
+                >
+                  <Settings size={14} /> Account Settings
+                </button>
                 <button className="dropdown-item-logout-btn" onClick={() => { setUserMenuOpen(false); onLogout(); }}>
                   <LogOut size={14} /> Log Out
                 </button>
@@ -363,6 +430,90 @@ export default function Dashboard({ user, token, onLogout, updateSEO }) {
               if (refresh) fetchCards();
             }} 
           />
+        )}
+
+        {/* ACCOUNT SETTINGS MODAL */}
+        {settingsModalOpen && (
+          <div className="modal-overlay" style={{ zIndex: 999 }}>
+            <div className="modal-container settings-modal">
+              <div className="modal-header">
+                <h3>Account Settings</h3>
+                <button className="close-btn" onClick={() => setSettingsModalOpen(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <form onSubmit={handleSaveSettings} className="settings-form">
+                <div className="form-group">
+                  <label>Profile Photo</label>
+                  <div className="settings-avatar-section">
+                    <img 
+                      src={avatarUrl || DEFAULT_AVATAR} 
+                      alt="User Avatar" 
+                      className="settings-avatar-preview"
+                    />
+                    <div className="settings-avatar-actions">
+                      <label className="upload-avatar-btn">
+                        Upload Photo
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          onChange={handleSettingsAvatarUpload} 
+                          style={{ display: 'none' }}
+                        />
+                      </label>
+                      {avatarUrl && (
+                        <button 
+                          type="button" 
+                          className="remove-avatar-btn" 
+                          onClick={() => setAvatarUrl('')}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="form-group">
+                  <label>Email Address</label>
+                  <input 
+                    type="email" 
+                    value={user?.email || ''} 
+                    disabled 
+                    className="disabled-input" 
+                  />
+                  <small className="help-text">Email address is read-only.</small>
+                </div>
+
+                <div className="form-group">
+                  <label>New Password</label>
+                  <input 
+                    type="password" 
+                    placeholder="Leave blank to keep current password" 
+                    value={newPassword} 
+                    onChange={(e) => setNewPassword(e.target.value)} 
+                  />
+                </div>
+
+                <div className="modal-actions">
+                  <button 
+                    type="button" 
+                    className="btn-secondary" 
+                    onClick={() => setSettingsModalOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="btn-primary"
+                    disabled={savingSettings}
+                  >
+                    {savingSettings ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
 
         {viewingAnalytics ? (

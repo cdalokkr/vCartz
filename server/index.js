@@ -122,7 +122,8 @@ app.post('/api/auth/login', async (req, res) => {
       token,
       user: {
         id: user.id,
-        email: user.email
+        email: user.email,
+        avatar_url: user.avatar_url
       }
     });
   } catch (error) {
@@ -139,7 +140,7 @@ app.post('/api/auth/logout', authenticateToken, (req, res) => {
 // Verify session
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
   try {
-    const user = await queryOne('SELECT id, email FROM users WHERE id = $1', [req.userId]);
+    const user = await queryOne('SELECT id, email, avatar_url FROM users WHERE id = $1', [req.userId]);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -163,6 +164,42 @@ app.get('/api/users', authenticateToken, async (req, res) => {
     res.json(formattedUsers);
   } catch (error) {
     console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Update user profile (password and profile avatar)
+app.put('/api/users/profile', authenticateToken, async (req, res) => {
+  const { password, avatarUrl } = req.body;
+  
+  try {
+    let updateFields = [];
+    let params = [];
+    let paramCounter = 1;
+    
+    if (password) {
+      const passHash = hashPassword(password);
+      updateFields.push(`password_hash = $${paramCounter++}`);
+      params.push(passHash);
+    }
+    
+    if (avatarUrl !== undefined) {
+      updateFields.push(`avatar_url = $${paramCounter++}`);
+      params.push(avatarUrl);
+    }
+    
+    if (updateFields.length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+    
+    params.push(req.userId);
+    const updateSql = `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${paramCounter}`;
+    await query(updateSql, params);
+    
+    const updatedUser = await queryOne('SELECT id, email, avatar_url FROM users WHERE id = $1', [req.userId]);
+    res.json({ message: 'Profile updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating profile:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -191,7 +228,7 @@ app.get('/api/cards', authenticateToken, async (req, res) => {
 app.post('/api/cards', authenticateToken, async (req, res) => {
   const { 
     slug, name, job_title, company, bio, phone, email, gmap, 
-    theme, accent_color, avatar_url, socials, expiry_date 
+    theme, accent_color, avatar_url, socials, expiry_date, services 
   } = req.body;
 
   if (!slug || !name) {
@@ -221,7 +258,29 @@ app.post('/api/cards', authenticateToken, async (req, res) => {
     
     if (expiry_date) {
       await query(
-        `INSERT INTO cards (user_id, slug, name, job_title, company, bio, phone, email, gmap, theme, accent_color, avatar_url, socials, expiry_date)
+        `INSERT INTO cards (user_id, slug, name, job_title, company, bio, phone, email, gmap, theme, accent_color, avatar_url, socials, expiry_date, services)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+        [
+          req.userId,
+          slug.toLowerCase().trim(),
+          name,
+          job_title || '',
+          company || '',
+          bio || '',
+          phone || '',
+          email || '',
+          gmap || '',
+          theme || 'aura-glass',
+          accent_color || '#D3B20D',
+          avatar_url || '',
+          socialsJson,
+          expiry_date,
+          services || ''
+        ]
+      );
+    } else {
+      await query(
+        `INSERT INTO cards (user_id, slug, name, job_title, company, bio, phone, email, gmap, theme, accent_color, avatar_url, socials, services)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
           req.userId,
@@ -237,27 +296,7 @@ app.post('/api/cards', authenticateToken, async (req, res) => {
           accent_color || '#D3B20D',
           avatar_url || '',
           socialsJson,
-          expiry_date
-        ]
-      );
-    } else {
-      await query(
-        `INSERT INTO cards (user_id, slug, name, job_title, company, bio, phone, email, gmap, theme, accent_color, avatar_url, socials)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
-        [
-          req.userId,
-          slug.toLowerCase().trim(),
-          name,
-          job_title || '',
-          company || '',
-          bio || '',
-          phone || '',
-          email || '',
-          gmap || '',
-          theme || 'aura-glass',
-          accent_color || '#D3B20D',
-          avatar_url || '',
-          socialsJson
+          services || ''
         ]
       );
     }
@@ -274,7 +313,7 @@ app.put('/api/cards/:id', authenticateToken, async (req, res) => {
   const cardId = req.params.id;
   const { 
     slug, name, job_title, company, bio, phone, email, gmap, 
-    theme, accent_color, avatar_url, socials, expiry_date 
+    theme, accent_color, avatar_url, socials, expiry_date, services 
   } = req.body;
 
   if (!slug || !name) {
@@ -304,8 +343,8 @@ app.put('/api/cards/:id', authenticateToken, async (req, res) => {
     await query(
       `UPDATE cards 
        SET slug = $1, name = $2, job_title = $3, company = $4, bio = $5, phone = $6, email = $7, gmap = $8, 
-           theme = $9, accent_color = $10, avatar_url = $11, socials = $12, expiry_date = $13
-       WHERE id = $14`,
+           theme = $9, accent_color = $10, avatar_url = $11, socials = $12, expiry_date = $13, services = $14
+       WHERE id = $15`,
       [
         slug.toLowerCase().trim(),
         name,
@@ -320,6 +359,7 @@ app.put('/api/cards/:id', authenticateToken, async (req, res) => {
         avatar_url || '',
         socialsJson,
         expiry_date,
+        services || '',
         cardId
       ]
     );
@@ -397,7 +437,8 @@ app.get('/api/public/cards/:slug', async (req, res) => {
       accent_color: card.accent_color,
       avatar_url: card.avatar_url,
       expiry_date: card.expiry_date,
-      socials: card.socials ? JSON.parse(card.socials) : {}
+      socials: card.socials ? JSON.parse(card.socials) : {},
+      services: card.services || ''
     };
 
     res.json(formattedCard);

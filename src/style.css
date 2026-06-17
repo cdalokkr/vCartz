@@ -3313,4 +3313,233 @@ body {
   }
 }
 
+/* --- User Account Settings Modal Styles --- */
+.settings-modal {
+  max-width: 480px !important;
+  width: 90% !important;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.settings-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.settings-avatar-preview {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-color, #D3B20D);
+}
+
+.settings-avatar-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.upload-avatar-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-avatar-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.remove-avatar-btn {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.remove-avatar-btn:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+}
+
+.disabled-input {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dropdown-item-settings-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dropdown-item-settings-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+
+/* --- Public Visiting Card Layout Adjustments --- */
+
+/* Embedded avatar inside the tilting card - hidden by default */
+.card-avatar-embedded {
+  display: none;
+}
+
+/* Services View Styling */
+.tab-services-view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.services-card {
+  width: 100%;
+  padding: 2rem 1.75rem;
+  border-radius: 28px;
+  background: var(--card-bg);
+  backdrop-filter: var(--card-backdrop);
+  -webkit-backdrop-filter: var(--card-backdrop);
+  border: var(--card-border);
+  box-shadow: var(--card-shadow);
+  text-align: left;
+}
+
+.services-card h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.75rem;
+}
+
+.services-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.service-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.service-icon {
+  color: var(--accent-color, #D3B20D);
+  font-weight: bold;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.service-text {
+  flex: 1;
+}
+
+/* Make bottom navigation tabs self-adjust dynamically for 3 or 4 tabs */
+.bottom-nav .nav-tab-btn {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+}
+
+
+/* --- Mobile-Specific Layout (max-width: 768px) --- */
+@media (max-width: 768px) {
+  /* On home page on mobile, hide the sticky header entirely */
+  .public-card-viewer.tab-home .card-sticky-header {
+    display: none !important;
+  }
+
+  /* Show embedded avatar inside the card on mobile home page tab */
+  .public-card-viewer.tab-home .card-avatar-embedded {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .public-card-viewer.tab-home .card-avatar-embedded img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-color, #D3B20D);
+    box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.2);
+    object-fit: cover;
+  }
+
+  /* Lock scrolling for home page tab to fit in the viewport */
+  .public-card-viewer.tab-home .card-viewer-body {
+    overflow-y: hidden !important;
+    justify-content: center;
+    padding-top: 1rem;
+    padding-bottom: 7.5rem; /* Safe padding above the bottom navigation bar */
+    height: calc(100vh - 1.5rem);
+  }
+
+  .public-card-viewer.tab-home .vcard-card-perspective {
+    margin: 0 auto;
+  }
+
+  .public-card-viewer.tab-home .vcard-card {
+    min-height: auto; /* Allow auto-sizing to fit viewport nicely */
+  }
+
+  /* Smooth animations for switching tabs */
+  .viewer-tab-content {
+    animation: fadeInTab 0.3s ease-out forwards;
+  }
+}
+
+@keyframes fadeInTab {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 

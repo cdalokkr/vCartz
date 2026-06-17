@@ -214,6 +214,7 @@ export default function App() {
         token={token} 
         onLogout={handleLogout} 
         updateSEO={updatePageSEO} 
+        onUpdateUser={setUser}
       />
     );
   }

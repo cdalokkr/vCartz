@@ -68,12 +68,14 @@ export async function initDb() {
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
+        avatar_url TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );`
     : `CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
+        avatar_url TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );`;
 
@@ -93,6 +95,7 @@ export async function initDb() {
         accent_color VARCHAR(50) DEFAULT '#D3B20D',
         avatar_url TEXT,
         socials TEXT,
+        services TEXT,
         expiry_date TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL '30 days'),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );`
@@ -111,6 +114,7 @@ export async function initDb() {
         accent_color TEXT DEFAULT '#D3B20D',
         avatar_url TEXT,
         socials TEXT,
+        services TEXT,
         expiry_date DATETIME DEFAULT (datetime('now', '+30 days')),
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );`;
@@ -149,6 +153,22 @@ export async function initDb() {
         await query("ALTER TABLE cards ADD COLUMN expiry_date DATETIME;");
         await query("UPDATE cards SET expiry_date = datetime('now', '+30 days') WHERE expiry_date IS NULL;");
       }
+    }
+
+    // Ensure services column exists in cards table
+    try {
+      await query('SELECT services FROM cards LIMIT 1');
+    } catch (colErr) {
+      console.log('Database Upgrade: Adding services column to cards table...');
+      await query("ALTER TABLE cards ADD COLUMN services TEXT;");
+    }
+
+    // Ensure avatar_url column exists in users table
+    try {
+      await query('SELECT avatar_url FROM users LIMIT 1');
+    } catch (colErr) {
+      console.log('Database Upgrade: Adding avatar_url column to users table...');
+      await query("ALTER TABLE users ADD COLUMN avatar_url TEXT;");
     }
     
     console.log('Database schema verified successfully.');

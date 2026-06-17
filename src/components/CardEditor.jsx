@@ -15,6 +15,7 @@ export default function CardEditor({ card, token, onClose }) {
   const [jobTitle, setJobTitle] = useState(card?.job_title || '');
   const [company, setCompany] = useState(card?.company || '');
   const [bio, setBio] = useState(card?.bio || '');
+  const [services, setServices] = useState(card?.services || '');
   const [phone, setPhone] = useState(card?.phone || '');
   const [email, setEmail] = useState(card?.email || '');
   const [gmap, setGmap] = useState(card?.gmap || '');
@@ -162,6 +163,7 @@ export default function CardEditor({ card, token, onClose }) {
       accent_color: accentColor,
       avatar_url: avatarUrl,
       socials,
+      services,
       expiry_date: new Date(expiryDate).toISOString()
     };
 
@@ -395,6 +397,15 @@ export default function CardEditor({ card, token, onClose }) {
                   value={bio} 
                   onChange={(e) => setBio(e.target.value)} 
                   placeholder="Briefly describe your services or profile..."
+                />
+              </div>
+              <div className="form-group full-width">
+                <label>Services (One per line)</label>
+                <textarea 
+                  rows="4"
+                  value={services} 
+                  onChange={(e) => setServices(e.target.value)} 
+                  placeholder="Enter services offered, one per line..."
                 />
               </div>
             </div>
