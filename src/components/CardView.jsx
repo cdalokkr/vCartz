@@ -546,6 +546,12 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
               </button>
             </div>
 
+            {/* App name below Save Contact button on mobile */}
+            <div className="card-header-mobile-below">
+              <h3>vCard<span>z</span></h3>
+              <p>Digital Business Card</p>
+            </div>
+
           </div>
         )}
 
@@ -573,7 +579,7 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
         {/* CONTACTS TAB */}
         {activeTab === 'contacts' && (
           <div className="viewer-tab-content tab-contacts-view">
-            <h3 className="section-title">Contact & Social Channels</h3>
+            <h3 className="section-title">Contacts</h3>
             
             <div className="contacts-list-wrapper">
               
@@ -653,14 +659,26 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                 </div>
               )}
 
-              {/* Social Channels list (authentic colors in a single row) */}
+              {/* Physical Address */}
+              {card.address && (
+                <div className="contact-item">
+                  <div className="contact-item-icon">
+                    <MapPin size={18} />
+                  </div>
+                  <div className="contact-item-details">
+                    <span className="label">Physical Address</span>
+                    <span className="value">{card.address}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Social Channels list */}
               {hasAnySocial && (
                 <div className="social-contacts-list">
                   <h4>Social Profiles</h4>
-                  <div className="social-icons-row-wrapper" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'nowrap', marginTop: '0.75rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
+                  <div className="social-icons-row-wrapper" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginTop: '0.75rem', paddingBottom: '0.25rem' }}>
                     {Object.entries(card.socials).map(([key, val]) => {
                       if (!val) return null;
-                      const isInsta = key === 'lnkInsta';
                       const linkUrl = key === 'lnkWa' ? `https://wa.me/${val.replace(/[^\d]/g, '')}` : val;
                       
                       return (
@@ -678,9 +696,9 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '1.2rem',
-                            background: isInsta ? getSocialStyle(key) : 'rgba(255, 255, 255, 0.03)',
-                            border: '1px solid rgba(255,255,255,0.08)',
-                            color: isInsta ? '#fff' : getSocialStyle(key),
+                            background: getSocialStyle(key),
+                            border: 'none',
+                            color: '#fff',
                             transition: 'all 0.2s',
                             flexShrink: 0
                           }}
@@ -774,6 +792,13 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
           <Home size={20} />
           <span>Home</span>
         </button>
+        <button 
+          className={`nav-tab-btn ${activeTab === 'contacts' ? 'active' : ''}`}
+          onClick={() => setActiveTab('contacts')}
+        >
+          <Phone size={20} />
+          <span>Contacts</span>
+        </button>
         {card.services && card.services.trim() && (
           <button 
             className={`nav-tab-btn ${activeTab === 'services' ? 'active' : ''}`}
@@ -783,13 +808,6 @@ export default function CardView({ slug, updateSEO, onGoHome }) {
             <span>Services</span>
           </button>
         )}
-        <button 
-          className={`nav-tab-btn ${activeTab === 'contacts' ? 'active' : ''}`}
-          onClick={() => setActiveTab('contacts')}
-        >
-          <Phone size={20} />
-          <span>Contacts</span>
-        </button>
         <button 
           className={`nav-tab-btn ${activeTab === 'qr' ? 'active' : ''}`}
           onClick={() => setActiveTab('qr')}

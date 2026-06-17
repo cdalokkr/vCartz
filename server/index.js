@@ -228,7 +228,7 @@ app.get('/api/cards', authenticateToken, async (req, res) => {
 app.post('/api/cards', authenticateToken, async (req, res) => {
   const { 
     slug, name, job_title, company, bio, phone, email, gmap, 
-    theme, accent_color, avatar_url, socials, expiry_date, services, about_us 
+    theme, accent_color, avatar_url, socials, expiry_date, services, about_us, address 
   } = req.body;
 
   if (!slug || !name) {
@@ -258,8 +258,8 @@ app.post('/api/cards', authenticateToken, async (req, res) => {
     
     if (expiry_date) {
       await query(
-        `INSERT INTO cards (user_id, slug, name, job_title, company, bio, phone, email, gmap, theme, accent_color, avatar_url, socials, expiry_date, services, about_us)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
+        `INSERT INTO cards (user_id, slug, name, job_title, company, bio, phone, email, gmap, theme, accent_color, avatar_url, socials, expiry_date, services, about_us, address)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)`,
         [
           req.userId,
           slug.toLowerCase().trim(),
@@ -276,13 +276,14 @@ app.post('/api/cards', authenticateToken, async (req, res) => {
           socialsJson,
           expiry_date,
           services || '',
-          about_us || ''
+          about_us || '',
+          address || ''
         ]
       );
     } else {
       await query(
-        `INSERT INTO cards (user_id, slug, name, job_title, company, bio, phone, email, gmap, theme, accent_color, avatar_url, socials, services, about_us)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+        `INSERT INTO cards (user_id, slug, name, job_title, company, bio, phone, email, gmap, theme, accent_color, avatar_url, socials, services, about_us, address)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
         [
           req.userId,
           slug.toLowerCase().trim(),
@@ -298,7 +299,8 @@ app.post('/api/cards', authenticateToken, async (req, res) => {
           avatar_url || '',
           socialsJson,
           services || '',
-          about_us || ''
+          about_us || '',
+          address || ''
         ]
       );
     }
@@ -315,7 +317,7 @@ app.put('/api/cards/:id', authenticateToken, async (req, res) => {
   const cardId = req.params.id;
   const { 
     slug, name, job_title, company, bio, phone, email, gmap, 
-    theme, accent_color, avatar_url, socials, expiry_date, services, about_us 
+    theme, accent_color, avatar_url, socials, expiry_date, services, about_us, address 
   } = req.body;
 
   if (!slug || !name) {
@@ -345,8 +347,8 @@ app.put('/api/cards/:id', authenticateToken, async (req, res) => {
     await query(
       `UPDATE cards 
        SET slug = $1, name = $2, job_title = $3, company = $4, bio = $5, phone = $6, email = $7, gmap = $8, 
-           theme = $9, accent_color = $10, avatar_url = $11, socials = $12, expiry_date = $13, services = $14, about_us = $15
-       WHERE id = $16`,
+           theme = $9, accent_color = $10, avatar_url = $11, socials = $12, expiry_date = $13, services = $14, about_us = $15, address = $16
+       WHERE id = $17`,
       [
         slug.toLowerCase().trim(),
         name,
@@ -363,6 +365,7 @@ app.put('/api/cards/:id', authenticateToken, async (req, res) => {
         expiry_date,
         services || '',
         about_us || '',
+        address || '',
         cardId
       ]
     );

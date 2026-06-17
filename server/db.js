@@ -171,6 +171,14 @@ export async function initDb() {
       await query("ALTER TABLE cards ADD COLUMN about_us TEXT;");
     }
 
+    // Ensure address column exists in cards table
+    try {
+      await query('SELECT address FROM cards LIMIT 1');
+    } catch (colErr) {
+      console.log('Database Upgrade: Adding address column to cards table...');
+      await query("ALTER TABLE cards ADD COLUMN address TEXT;");
+    }
+
     // Ensure avatar_url column exists in users table
     try {
       await query('SELECT avatar_url FROM users LIMIT 1');

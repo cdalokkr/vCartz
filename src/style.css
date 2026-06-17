@@ -2734,6 +2734,9 @@ body {
   letter-spacing: -0.05em;
   color: #fff;
 }
+.card-header-mobile-below {
+  display: none;
+}
 .card-header-embedded h3 span {
   color: var(--accent-color);
 }
@@ -2832,10 +2835,11 @@ body {
   gap: 0.75rem;
 }
 .social-contacts-list h4 {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-size: 0.85rem;
+  color: var(--accent-color);
+  font-weight: 650;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin-bottom: 0.25rem;
 }
 .social-list-row {
@@ -3582,13 +3586,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 0.15rem;
+    margin-top: -0.3rem !important; /* Reduced top margin of avatar */
     margin-bottom: 0.15rem;
   }
 
   .public-card-viewer.tab-home .card-avatar-embedded img {
-    width: 115px; /* Increased size */
-    height: 115px; /* Increased size */
+    width: 135px !important; /* Increased size */
+    height: 135px !important; /* Increased size */
     border-radius: 50%;
     border: 3px solid var(--accent-color, #D3B20D);
     box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.25);
@@ -3596,9 +3600,42 @@ body {
   }
 
   .public-card-viewer.tab-home .card-header-embedded {
-    margin-bottom: 0;
-    padding-top: 0.15rem;
-    padding-bottom: 0.15rem;
+    display: none !important; /* Hide original header inside card on mobile */
+  }
+
+  .card-header-mobile-below {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.5rem !important;
+    width: 100%;
+  }
+
+  .card-header-mobile-below h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    color: #fff;
+  }
+
+  .card-header-mobile-below h3 span {
+    color: var(--accent-color);
+  }
+
+  .card-header-mobile-below p {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.1rem;
+  }
+
+  .public-card-viewer.tab-home .card-bio-wrap {
+    margin-left: -0.25rem !important;
+    margin-right: -0.25rem !important;
+    margin-bottom: 1rem !important;
   }
 
   /* Lock scrolling for home page tab to fit in the viewport */
@@ -3619,6 +3656,32 @@ body {
   .public-card-viewer.tab-home .vcard-card {
     min-height: auto; /* Allow auto-sizing to fit viewport nicely */
     border-radius: 20px; /* Reduced from 28px to save vertical space on mobile headers */
+  }
+
+  /* My QR mobile viewport spacing optimizations */
+  .public-card-viewer.tab-qr .card-viewer-body {
+    padding-top: 0.5rem !important; /* Match left/right margin */
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  .tab-qr-view {
+    padding: 0 !important;
+  }
+
+  .qr-tab-card p {
+    margin-left: -0.5rem !important;
+    margin-right: -0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .qr-code-container {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .qr-card-slug {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.75rem !important;
   }
 
   /* Smooth animations for switching tabs */

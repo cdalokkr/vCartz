@@ -32,6 +32,7 @@ export default function CardEditor({ card, token, onClose }) {
   const [theme, setTheme] = useState(card?.theme || 'aura-glass');
   const [accentColor, setAccentColor] = useState(card?.accent_color || '#D3B20D');
   const [avatarUrl, setAvatarUrl] = useState(card?.avatar_url || '');
+  const [address, setAddress] = useState(card?.address || '');
   const [socials, setSocials] = useState(card?.socials || {
     lnkLinkedIn: '',
     lnkTwitter: '',
@@ -191,6 +192,7 @@ export default function CardEditor({ card, token, onClose }) {
       avatar_url: avatarUrl,
       socials,
       services: servicesList.filter(s => s.trim()).join('\n'),
+      address,
       expiry_date: new Date(expiryDate).toISOString()
     };
 
@@ -453,6 +455,17 @@ export default function CardEditor({ card, token, onClose }) {
                       placeholder="Aether Studio"
                     />
                   </div>
+                </div>
+
+                {/* Row 4: Physical Address */}
+                <div className="form-group full-width" style={{ marginTop: '0.75rem' }}>
+                  <label>Physical Address</label>
+                  <input 
+                    type="text" 
+                    value={address} 
+                    onChange={(e) => setAddress(e.target.value)} 
+                    placeholder="123 Creative Lane, Suite 100, Metro City"
+                  />
                 </div>
               </div>
             )}
