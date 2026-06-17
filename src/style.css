@@ -445,7 +445,7 @@ body {
   background: var(--card-bg);
   backdrop-filter: var(--card-backdrop);
   -webkit-backdrop-filter: var(--card-backdrop);
-  border: 1.5px solid var(--accent-color);
+  border: var(--card-border);
   box-shadow: var(--card-shadow);
   transform-style: preserve-3d;
   transition: box-shadow 0.3s ease;
@@ -3547,18 +3547,18 @@ body {
 @media (max-width: 768px) {
   /* Expand card width generally on mobile for all tab pages */
   .card-viewer-body {
-    padding: 1rem 0.75rem 6.5rem 0.75rem !important; /* Reduced left/right padding to 0.75rem (12px) to expand card width */
+    padding: 1rem 0.5rem 6.5rem 0.5rem !important; /* Reduced left/right padding to 0.5rem (8px) to expand card width */
   }
 
   /* Expand bottom menu bar width and prevent text wrapping */
   .bottom-nav {
-    width: calc(100% - 1.5rem) !important; /* Leaves exactly 0.75rem margin on each side to match the card */
+    width: calc(100% - 1rem) !important; /* Leaves exactly 0.5rem margin on each side to match the card */
     max-width: 440px !important;
     bottom: 1rem !important;
   }
 
   .nav-tab-btn {
-    padding: 0.5rem 0.25rem !important; /* Reduced button padding to make more room for 5 tabs */
+    padding: 0.5rem 0.20rem !important; /* Reduced button padding to make more room for 5 tabs */
   }
 
   .nav-tab-btn span {
@@ -3604,16 +3604,16 @@ body {
   /* Lock scrolling for home page tab to fit in the viewport */
   .public-card-viewer.tab-home .card-viewer-body {
     overflow-y: hidden !important;
-    justify-content: flex-start; /* Align card flush to the top! */
-    padding-top: 0.75rem !important; /* Margins match left/right margin exactly! */
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
+    justify-content: flex-start;
+    padding-top: 0 !important; /* Reset padding-top to allow margin-top on the card perspective */
+    padding-left: 0.5rem !important; /* Match horizontal margin */
+    padding-right: 0.5rem !important; /* Match horizontal margin */
     padding-bottom: 6.5rem; /* Safe padding above bottom nav bar */
-    height: calc(100vh - 1.5rem);
+    height: calc(100vh - 1rem);
   }
 
   .public-card-viewer.tab-home .vcard-card-perspective {
-    margin: 0 auto;
+    margin: 0.5rem auto 0 auto !important; /* Keep exactly 0.5rem (8px) margin above the card to match side margins! */
   }
 
   .public-card-viewer.tab-home .vcard-card {
