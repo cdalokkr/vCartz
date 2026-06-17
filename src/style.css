@@ -1829,6 +1829,16 @@ body {
   margin-bottom: 2.5rem;
   padding-left: 0.5rem;
 }
+.dashboard-sidebar .logo h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.05em;
+  margin: 0;
+}
+.dashboard-sidebar .logo h1 span {
+  color: var(--accent-color);
+}
 .user-badge {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -3061,6 +3071,10 @@ body {
   border-radius: 12px;
   padding: 0.75rem 1.5rem;
   margin-bottom: 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .top-bar-title {
@@ -3582,7 +3596,7 @@ body {
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
 }
-.light-theme .dashboard-sidebar .logo h2 {
+.light-theme .dashboard-sidebar .logo h1 {
   color: #0f172a;
 }
 .light-theme .dashboard-sidebar .logo span {
@@ -3595,17 +3609,22 @@ body {
 .light-theme .user-email {
   color: #0f172a;
 }
-.light-theme .sidebar-nav-btn {
+.light-theme .sidebar-nav button {
   color: #475569;
 }
-.light-theme .sidebar-nav-btn:hover,
-.light-theme .sidebar-nav-btn.active {
-  background: #f1f5f9;
+.light-theme .sidebar-nav button:hover {
+  background: rgba(0, 0, 0, 0.04);
   color: #0f172a;
+}
+.light-theme .sidebar-nav button.active {
+  background: rgba(var(--accent-rgb), 0.08);
+  color: var(--accent-color);
+  border-left: 3px solid var(--accent-color);
 }
 .light-theme .dashboard-top-bar {
   background: #ffffff;
   border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 .light-theme .top-bar-title {
   color: #0f172a;
